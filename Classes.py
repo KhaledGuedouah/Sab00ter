@@ -9,18 +9,45 @@ class Card():
     
 
     def reveal(self):
-        a= f"""
+
+        snd=self.name
+        shwd= f"""
         ({" "*len(self.name)})
-        ({self.name})
+        ({snd})
         ({" "*len(self.name)})
         """
-        print(a)
+        print(shwd)
 
 
     def __str__(self):
         return f"{self.name} ({self.function}) card "
 
 
-#carta=Card("SAB")
-#print(carta)
-#carta.reveal()
+class PathCard(Card):
+
+
+    
+    def reveal(self):
+
+        fst="   "
+        snd=f" {self.function[1]} "
+        thd="   "
+
+        if "U" in self.name:
+            fst=" | "
+        if "L" in self.name:
+            snd="-"+snd[1:]
+        if "R" in self.name:
+            snd=snd[:1]+"-"
+        if "D" in self.name:
+            thd=" | "
+    
+        shwd= f"({fst})\n({snd})\n({thd})"
+        print(shwd)
+
+
+
+
+carta=PathCard("UDL",'N+')
+print(carta)
+carta.reveal()
