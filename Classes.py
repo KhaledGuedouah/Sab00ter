@@ -61,7 +61,20 @@ class ActionCard(Card):
         shwd= f"({fst})\n({snd})\n({thd})"
         print(shwd)
 
-"""
+
+class GoldCard(Card):
+
+    def __init__(self, name, function="Nu",gain=1):
+        Card.__init__(self,name,function)
+        self.gain=gain
+    def reveal(self):
+
+        fst=f" {self.gain} "
+        snd=f"{self.name}"
+        thd=f"   "
+        shwd= f"({fst})\n({snd})\n({thd})"
+        print(shwd)
+'''
 carta=PathCard("UDL",'Nx')
 print(carta)
 carta.reveal()
@@ -71,4 +84,7 @@ carta.reveal()
 carta=ActionCard("Lit",'N+')
 print(carta)
 carta.reveal()
-"""
+carta=GoldCard("Gld",'Nu',4)
+print(carta)
+carta.reveal()
+'''
