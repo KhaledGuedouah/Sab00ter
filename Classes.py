@@ -18,6 +18,7 @@ class Card():
     def __str__(self):
         return f"{self.name} ({self.function}) card "
 
+# Definition of the inheriting class CARD
 
 class PathCard(Card):
     def display_card(self):
@@ -30,7 +31,7 @@ class PathCard(Card):
         if "L" in self.name:
             snd="-"+snd[1:]
         if "R" in self.name:
-            snd=snd[:1]+"-"
+            snd=snd[:2]+"-"
         if "D" in self.name:
             thd=" | "
     
@@ -172,6 +173,82 @@ def create_dec():
     S=GoalCard("URLD",value='G')
     card_list.append(S)
 
+# 5 card URDL N+
+    for _ in range(5):
+        S=PathCard("URDL","N+")
+        card_list.append(S)
+
+# 5 card URD N+    
+    for _ in range(5):
+        S=PathCard("URD","N+")
+        card_list.append(S)
+
+# 5 card URL N+
+    for _ in range(5):
+        S=PathCard("URL","N+")
+        card_list.append(S)
+
+# 5 card UR N+
+    for _ in range(5):
+        S=PathCard("UR","N+")
+        card_list.append(S)
+
+# 5 card UL N+
+    for _ in range(5):
+        S=PathCard("UL","N+")
+        card_list.append(S)
+# 5 card UD N+
+    for _ in range(5):
+        S=PathCard("UD","N+")
+        card_list.append(S)
+# 5 card RL N+
+    for _ in range(5):
+        S=PathCard("RL","N+")
+        card_list.append(S)
+
+# a card URDL Nx
+    S=PathCard("URDL","Nx")
+    card_list.append(S)
+# a card URD Nx   
+    S=PathCard("URD","Nx")
+    card_list.append(S)
+# a card URL Nx
+    S=PathCard("URL","Nx")
+    card_list.append(S)
+# a card UR Nx
+    S=PathCard("UR","Nx")
+    card_list.append(S)
+# a card UL Nx
+    S=PathCard("UL","Nx")
+    card_list.append(S)
+# a card UD Nx
+    S=PathCard("UD","Nx")
+    card_list.append(S)
+# a card RL Nx
+    S=PathCard("RL","Nx")
+    card_list.append(S)
+# a card R Nx
+    S=PathCard("R","Nx")
+    card_list.append(S)
+# a card U Nx
+    S=PathCard("U","Nx")
+    card_list.append(S)
+
+# 16 1G Gold card RL N+
+    for _ in range(5):
+        S=GoldCard(" G ",gain=1)
+        card_list.append(S) 
+
+# 8 2G Gold card RL N+
+    for _ in range(5):
+        S=GoldCard(" G ",gain=2)
+        card_list.append(S)    
+
+# 4 3G Gold card RL N+
+    for _ in range(5):
+        S=GoldCard(" G ",gain=3)
+        card_list.append(S)   
+
     return card_list
 
 p=create_dec()
@@ -180,11 +257,6 @@ for i in p:
     print(i.display_card())
     print("\n")
 
-for i in range(1,4):
-    print(p[-i].show_card())
-    print('\n')
-
-    
 
 
 '''
