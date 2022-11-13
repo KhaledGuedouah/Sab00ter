@@ -25,8 +25,6 @@ class Card():
 
 class PathCard(Card):
 
-
-    
     def reveal(self):
 
         fst="   "
@@ -46,8 +44,31 @@ class PathCard(Card):
         print(shwd)
 
 
+class ActionCard(Card):
+    def reveal(self):
 
+        fst=f" {self.name[0]} "
+        snd=f"{self.name}"
+        thd=f" {self.name[2]} "
+        if self.function == "Nx":
+            fst=f"ATT"
+            snd=f" {self.name[0]} "
+            thd=f"   "
+        elif self.function == "N+":
+            fst=f"DIF"
+            snd=f" {self.name[0]} "
+            thd=f"   "
+        shwd= f"({fst})\n({snd})\n({thd})"
+        print(shwd)
 
-carta=PathCard("UDL",'N+')
+"""
+carta=PathCard("UDL",'Nx')
 print(carta)
 carta.reveal()
+carta=ActionCard("MAP",'Nu')
+print(carta)
+carta.reveal()
+carta=ActionCard("Lit",'N+')
+print(carta)
+carta.reveal()
+"""
