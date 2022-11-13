@@ -18,7 +18,7 @@ class Card():
     def __str__(self):
         return f"{self.name} ({self.function}) card "
 
-# Definition of the inheriting class CARD
+# Definition of the inheriting classes of Card
 
 class PathCard(Card):
     def display_card(self):
@@ -101,7 +101,7 @@ class GoalCard(PathCard):
         shwd= f"({fst})\n({snd})\n({thd})"
         return shwd
 
-
+# Fucntion to create all cards of the game 
 
 def create_dec():
     card_list=[]
@@ -251,6 +251,7 @@ def create_dec():
 
     return card_list
 
+'''
 p=create_dec()
 
 for i in p:
@@ -259,7 +260,6 @@ for i in p:
 
 
 
-'''
 carta=PathCard("UDL",'Nx')
 print(carta)
 carta.display_card()
