@@ -61,7 +61,7 @@ class ActionCard(Card):
 
 class GoldCard(Card):
 
-    def __init__(self, name, function="Nu",gain=1):
+    def __init__(self, name, function="Nu",gain=0):
         Card.__init__(self,name,function)
         self.gain=gain
 
@@ -310,8 +310,8 @@ class player():
         if (len(self.actions)==0) : 
             print("No action cards in the player's hand")
         for i in range(len(self.actions)): 
-            if (self.actions[i].name == DesActCard.name):
-                self.actions.pop(i) 
+            if (self.actions[i].name in DesActCard.name):
+                self.actions.pop(i) # case where the player have to chose
                 break 
             
 class game(): #Partie
