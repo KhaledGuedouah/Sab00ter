@@ -301,7 +301,7 @@ class player():
        # probably before caling this function
         if ( ( DesActCard in self.actions) or (len(self.actions)==3) ) :
             print("Cannot play this card") #Go back to choice 
-        if(len(self.actions)<3):
+        elif(len(self.actions)<3):
                 self.actions.append(DesActCard)
                 
     def Remove_Action (self,DesActCard):
@@ -353,8 +353,8 @@ class hand () :
         
     def DisplayHand (self):
         for card in self.handCards :
-            card.display_card()
-            print(card)
+            print(card.display_card())
+            #print(card)
             
     def UpdateHand(self,NewHand):
         self.handCards = NewHand
@@ -403,8 +403,8 @@ class manche () :
         else :
             print("Number of players is not valid")
             
-        for plyr in Game.players : 
-            plyr.hand = hand(random_cards(avcards,nm_cr),nm_cr)
+        for i in range(len(Game.players)) : 
+            Game.players[i].hand = hand(random_cards(avcards,nm_cr),nm_cr)
         self.stockpile = avcards
 def random_cards(avcards,num_cr) :
     cards = []
