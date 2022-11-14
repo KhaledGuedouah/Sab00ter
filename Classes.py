@@ -352,9 +352,17 @@ class hand () :
         else : print("You have Max Number of cards Already")
         
     def DisplayHand (self):
+        space = "    "
+        lines=[[],[],[]]
         for card in self.handCards :
-            print(card.display_card())
-            #print(card)
+            card_in_lst=card.display_card().split('\n')
+            lines[0].append(card_in_lst[0])
+            lines[1].append(card_in_lst[1])
+            lines[2].append(card_in_lst[2])
+        for line in lines:
+            print(space.join(line)) 
+        
+        
             
     def UpdateHand(self,NewHand):
         self.handCards = NewHand
