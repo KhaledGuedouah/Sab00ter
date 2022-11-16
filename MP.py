@@ -2,11 +2,11 @@
 import random 
 import Classes
 class map():
-    def __init__(self,grid,n,m,start_coord,dec):   
+    def __init__(self,grid,dec,n=9,m=4,start_coord=[2,0]):   
         self.dec=dec
-        self.n=9
-        self.m=4
-        self.start_coord=[2,0]
+        self.n=n
+        self.m=m
+        self.start_coord=start_coord
 
         goalcards=random.shuffle(self.dec["Goal"])
         grid= [ [ 0 for i in range(n) ] for j in range(m) ] #creating an empty grid     

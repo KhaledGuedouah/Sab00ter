@@ -1,6 +1,7 @@
 print("Here's where we can code the Classes")
 
 import random
+import MP
 # Definition of the Mother class CARD
 class Card():
 
@@ -301,9 +302,10 @@ class player():
         self.role = None
         self.hand =  None
         self.actions = []
-    
+            
+    """ 
     def Add_Action (self,DesActCard):
-       # we have to make sure that (DesActCard.function == "Nx") 
+      # we have to make sure that (DesActCard.function == "Nx") 
        # probably before caling this function
         if ( ( DesActCard in self.actions) or (len(self.actions)==3) ) :
             print("Cannot play this card") #Go back to choice 
@@ -319,7 +321,7 @@ class player():
             if (self.actions[i].name in DesActCard.name):
                 self.actions.pop(i) # case where the player have to chose
                 break 
-            
+            """
 class game(): #Partie
 
     def __init__(self,players):
@@ -402,9 +404,11 @@ class manche () :
             rand_role = selectioncards.pop(random.randrange(len(selectioncards)))
             Game.players[i].role = rand_role.name
             
+    def showRoles (self,Game):
+        for i in range (len(Game.players)):
+            input(f"player {Game.players[i].name} press a Key ") 
+            print(f"Your Role is {Game.players[i].role} \n")
             
-
-    
     def DistributeCards(self,Game):
         num_ply = len(Game.players)
         avcards = Game.AvailableCards
@@ -426,16 +430,75 @@ def random_cards(avcards,num_cr) :
         cards.append(avcards.pop(random.randrange(len(avcards))))      
     return cards
 
-plyr1 = player("Khaled")
+
+
+class Tour():
+    def __init__(self,current_player):
+        self.current_player = current_player
+    def nextplayer (self,next_player):
+        self.current_player = next_player
+
+    def action_on_player(self,target_player,IdxCard,idxCardtoRem = None):
+        if (self.current_player.hand.handCards[IdxCard].function == "Nx") : 
+            if ( ( self.current_player.hand.handCards[IdxCard] in target_player.actions) or (len(target_player.actions))==3 ) :
+                print("Cannot play this card") #Go back to choice 
+            elif(len(target_player.actions)<3):
+                target_player.actions.append(self.current_player.hand.handCards[IdxCard])
+            else : 
+                print("error")
+        elif (self.current_player.hand.handCards[IdxCard].function == "N+"):
+            if (len(target_player.actions)==0) : 
+                print("No action cards in the player's hand")
+            else :
+                if (target_player.actions[idxCardtoRem].name in self.current_player.hand.handCards[IdxCard].name):
+                    target_player.actions.pop(idxCardtoRem) # case where the player have to chose
+                print("The action card cannot be played for the target_player")
+
+    def action_on_map (self,IdxCard,map,x,y):
+        if (self.current_player.hand.handCards[IdxCard].name == "RoF") :
+            print("raa3333")
+        elif (self.current_player.hand.handCards[IdxCard].name == "MAP") :
+            print("Show us the nugget")
+        else :
+            print("Error")
+    def play_action(self,IdxCard,map=None,target_player=None,idxCardtoRem=None) :
+        if (target_player == None) and (map != None) : 
+            print("1")
+            self.action_on_map (IdxCard,map)
+            
+        elif (target_player!=None) :
+            print("2")
+            self.action_on_player(target_player,IdxCard,idxCardtoRem)
+            
+        else : print("Error")
+    def show_actions(self,Game) :
+        for i in range(len(Game.players)):
+            print(f"Action cards played on {Game.players[i].name}")
+            for crd in Game.players[i].actions:
+                print(crd,end="\t")
+            print("")
+"""plyr1 = player("Khaled")
 plyr2 = player("Feriel")
 plyr3 = player("Assil")
 Game = game([plyr1,plyr2,plyr3])
 manche1 = manche()
 manche1.DistributeRoles(Game)
 manche1.DistributeCards(Game)
+manche1.showRoles(Game)
+#print(plyr1.role , plyr2.role , plyr3.role)
 
-print(plyr1.role , plyr2.role , plyr3.role)
-hand1 = plyr1.hand 
+hand1 = plyr3.hand 
 hand1.DisplayHand ()
+tour1 = Tour(plyr3)
+idx=int(input("Please play a card \n"))
+c = tour1.current_player.hand.handCards[idx]
+tour1.play_action(idx,target_player=plyr1)
 
-
+tour1.nextplayer (plyr2)
+plyr2.hand.DisplayHand()
+idx=int(input("Please play a card \n"))
+tour1.play_action(idx,target_player=plyr3)
+tour1.show_actions(Game)"""
+map1 = MP.map()
+         
+    
