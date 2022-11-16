@@ -77,11 +77,21 @@ class GoldCard(Card):
         shwd= f"({fst})\n({snd})\n({thd})"
         return shwd
 
-
+class VoidCard(Card):
+    def __init__(self):
+        Card.__init__(self,name="void",function="void")
+    def display_card(self):
+        fst= "   "
+        snd= "   "
+        thd= "   "
+        shwd= f" {fst} \n {snd} \n {thd} "
+        return shwd
+    
 class GoalCard(PathCard):
-    def __init__(self, name, function="Nu",value='N'):
+    def __init__(self, name, function="Nu",value='N', revealed=False):
         PathCard.__init__(self,name,function)
         self.value=value
+        self.revealed = revealed
 
     def show_card(self):
         fst="   "
@@ -101,11 +111,15 @@ class GoalCard(PathCard):
         return shwd
         
     def display_card(self):
-        fst=f"   "
-        snd=f"END"
-        thd=f"   "
-        shwd= f"({fst})\n({snd})\n({thd})"
-        return shwd
+        if (self.revealed==False):
+            fst=f"   "
+            snd=f"END"
+            thd=f"   "
+            shwd= f"({fst})\n({snd})\n({thd})"
+            return shwd
+        else :
+            return self.show_card()
+    
 
 # Fucntion to create all cards of the game 
 
@@ -600,11 +614,9 @@ class map():
         self.m=m
         self.start_coord=start_coord
         goalcards = self.dec["Goal"]
-        print(goalcards)
+        voidcard = VoidCard()
         random.shuffle(goalcards)
-        print(len(goalcards))
-        grid= [ [ '' for i in range(n) ] for j in range(m) ] #creating an empty grid  
-        print("1")   
+        grid= [ [ voidcard for i in range(n) ] for j in range(m) ] #creating an empty grid  
         grid[2][0]= self.dec["Start"]#filling the starting card
         #filling the goal cards
         grid[0][8]=  goalcards[0]
@@ -612,12 +624,117 @@ class map():
         grid[4][8]=  goalcards[2]
         self.grid=grid
 """
+        
+    def display_map(self) :
+        first = ''
+        for p in range(self.n):
+            first+= "  " + f"{p}" + "  "
+        first = " |" + first
+        second = "-"* 5 * self.n
+        second = "-+"+second
+        grid_to_print=''
+        print(first)
+        print(second)
+        for i in range (map1.m) :
+            for k in range(3):
+                line=''
+                if (k==1) : line = f"{i}|"
+                else : line = f" |"
+                for j in range (map1.n):
+                    a=map1.grid[i][j].display_card().split("\n")
+                    line = line + a[k]
+                grid_to_print+=line+'\n'
+        print(grid_to_print)
+
+    def update_map(self,Cardplayed,x,y):
+
+        if (x == self.m  ) :
+            self.grid.append([VoidCard()]*self.n)
+            self.grid[x][y]=Cardplayed
+            self.m += 1
+            
+                
+        elif (x == -1) :
+            self.grid.insert(0,[VoidCard()]*self.n)
+            self.grid[x+1][y]=Cardplayed
+            self.m += 1
+            self.start_coord[0]+=1
+
+        elif (y == self.n) :
+            for i in range(self.m):
+                self.grid[i].append(VoidCard())
+            self.grid[x][y]=Cardplayed
+            self.n+=1
+        elif (y == -1):
+            for i in range(self.m):
+                self.grid[i].insert(0,VoidCard())
+            self.grid[x][y+1]=Cardplayed
+            self.n+=1
+            self.start_coord[1]+=1
+        else : 
+            if(self.grid[x][y].name == "void"):
+                self.grid[x][y]=Cardplayed
+            elif (self.grid[x][y].name != "RoF"):
+                self.grid[x][y]= VoidCard()
+            else :
+                print("Error : Card Position")
+    
+    def check_map (self) :
+        x0,y0=self.start_coord[0],self.start_coord[1]
+        xf1,yf = x0-2,y0+5
+        xf2= x0
+        xf3= x0+2
+        x=[xf1,xf2,xf3]
+#checking surroundings of 1st goal card
+    
+        if (yf<self.n):
+            if self.grid[i+1][yf].name!= "void" or self.grid[i][yf-1].name!= "void" or self.grid[i-1][yf].name!= "void" or self.grid[i][yf].name!= "void":
+        
+            
+
+
+        
+      """  x0,y0=self.start_coord[0],self.start_coord[1]
+        current_card = self.grid[x0][y0]
+        while(True):
+            if self.grid[x0+1][y0].name != "void":
+                current_card=self.grid[x0+1][y0]
+                x0+=1
+            else:
+                x0,y0=self.start_coord[0],self.start_coord[1]
+                break
+
+        while(True):
+            if self.grid[x0-1][y0].name != "void":
+                current_card=self.grid[x0-1][y0]
+                y0+=1
+            else:
+                x0,y0=self.start_coord[0],self.start_coord[1]
+                break
+            
+        while(True):
+            if self.grid[x0][y0+1].name != "void":
+                current_card=self.grid[x0][y0+1]
+                y0+=1
+            else:
+                x0,y0=self.start_coord[0],self.start_coord[1]
+                break            
+
+        """
+
 decc= create_dec()
 map1 = map(decc)
+map1.update_map(decc["Path"][0],2,4)
+
+
+map1.display_map()
+print(map1.start_coord)
+"""
 for i in range (map1.m) :
     for j in range (map1.n):
-        print(map1.grid[i][j],end="\t")
+        print(map1.grid[i][j].display_card(),end="\t")
     print("\n")
+<<<<<<< HEAD
   
 
 plyr1 = player("Khaled")
@@ -633,3 +750,6 @@ manche1.showRoles(Game)
 hand1 = plyr3.hand 
 hand1.DisplayHand ()
 """  
+=======
+"""    
+>>>>>>> ceab6b21b77e5903ac1fa6ed5fdb2cfd9f3f5b52
