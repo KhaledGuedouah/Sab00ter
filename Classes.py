@@ -477,6 +477,18 @@ class Tour():
             for crd in Game.players[i].actions:
                 print(crd,end="\t")
             print("")
+    def play_path(self,idx,IdxCard,map=None):
+        pass
+
+
+
+
+
+
+
+
+
+
 """plyr1 = player("Khaled")
 plyr2 = player("Feriel")
 plyr3 = player("Assil")
