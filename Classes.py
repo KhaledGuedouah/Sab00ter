@@ -477,8 +477,90 @@ class Tour():
             for crd in Game.players[i].actions:
                 print(crd,end="\t")
             print("")
-    def play_path(self,idx,IdxCard,map=None):
-        pass
+    def play_path(self,IdxCard,x_pos,y_pos,MAP=None,reverse=0):
+        
+        cord=[[x_pos-1,y_pos,'U'],[x_pos,y_pos-1,'L'],[x_pos+1,y_pos,'D'],[x_pos,y_pos+1,'R']]
+        cord = [[x_pos - 1, y_pos, 'U'], [x_pos, y_pos - 1, 'L'], [x_pos + 1, y_pos, 'D'], [x_pos, y_pos + 1, 'R']]
+        cx=[]
+        cy=[]
+        if (x_pos == 0):
+
+            cx.append(cord[1])
+            cx.append(cord[2])
+            cx.append(cord[3])
+        elif (x_pos == m - 1):
+            cx.append(cord[0])
+            cx.append(cord[1])
+            cx.append(cord[3])
+        elif (x_pos == -1):
+            cx.append(cord[2])
+        elif (x_pos == m):
+            cx.append(cord[0])
+        else:
+            cx=cord
+
+
+        if (y_pos == 0):
+            cy.append(cord[0])
+            cy.append(cord[2])
+            cy.append(cord[3])
+        elif (y_pos == n - 1):
+            cy.append(cord[0])
+            cy.append(cord[1])
+            cy.append(cord[2])
+        elif (y_pos == -1):
+            cy.append(cord[3])
+        elif (y_pos == n):
+            cy.append(cord[1])
+        else:
+            cy = cord
+        c=[]
+        for elem in cy:
+            if elem in cx:
+                c.append(elem)
+
+
+        cord=c
+        print(cord)  
+
+
+
+
+        go=False
+        #condition_on_sides=MAP.grid[x_pos-1][y_pos].name!="void" or MAP.grid[x_pos][y_pos-1].name!="void" or MAP.grid[x_pos][y_pos+1].name!="void" or MAP.grid[x_pos+1][y_pos].name!="void"
+       
+        if(MAP.grid[x_pos][y_pos].name=="void"):
+            for crd in cord:
+                if MAP.grid[crd[0]][crd[1]].name=="void":
+                    pass
+                elif crd[3] in self.current_player.hand.handCards[IdxCard].name:
+                    go=True
+                    pass
+                else:
+                    go=False
+                    break
+            if go:
+                MAP.grid[x_pos][y_pos]=self.current_player.hand.handCards[IdxCard]
+
+
+            
+
+        else:
+            print("There is a card already played there")
+    def play_card(self,IdxCard,x_pos=None,y_pos=None,map=None,target_player=None,idxCardtoRem=None):
+
+        if type(self.current_player.hand.handCards[IdxCard])==type(ActionCard):
+
+            self.play_action(IdxCard=IdxCard,map=map,target_player=target_player,idxCardtoRem=idxCardtoRem)
+
+        elif type(self.current_player.hand.handCards[IdxCard])==type(PathCard):
+
+            self.play_path(IdxCard=IdxCard,map=map,target_player=target_player,idxCardtoRem=idxCardtoRem)
+        else:
+            print("Error type of card invalid")
+
+
+        
 
 
 
@@ -529,10 +611,25 @@ class map():
         grid[2][8]=  goalcards[1]
         grid[4][8]=  goalcards[2]
         self.grid=grid
+"""
 decc= create_dec()
 map1 = map(decc)
 for i in range (map1.m) :
     for j in range (map1.n):
         print(map1.grid[i][j],end="\t")
     print("\n")
-    
+  
+
+plyr1 = player("Khaled")
+plyr2 = player("Feriel")
+plyr3 = player("Assil")
+Game = game([plyr1,plyr2,plyr3])
+manche1 = manche()
+manche1.DistributeRoles(Game)
+manche1.DistributeCards(Game)
+manche1.showRoles(Game)
+#print(plyr1.role , plyr2.role , plyr3.role)
+
+hand1 = plyr3.hand 
+hand1.DisplayHand ()
+"""  
