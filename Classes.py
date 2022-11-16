@@ -623,7 +623,7 @@ class map():
         grid[2][8]=  goalcards[1]
         grid[4][8]=  goalcards[2]
         self.grid=grid
-"""
+
         
     def display_map(self) :
         first = ''
@@ -686,15 +686,15 @@ class map():
         xf3= x0+2
         x=[xf1,xf2,xf3]
 #checking surroundings of 1st goal card
-    
+    """
         if (yf<self.n):
             if self.grid[i+1][yf].name!= "void" or self.grid[i][yf-1].name!= "void" or self.grid[i-1][yf].name!= "void" or self.grid[i][yf].name!= "void":
-        
+        """
             
 
 
         
-      """  x0,y0=self.start_coord[0],self.start_coord[1]
+    """  x0,y0=self.start_coord[0],self.start_coord[1]
         current_card = self.grid[x0][y0]
         while(True):
             if self.grid[x0+1][y0].name != "void":
@@ -734,7 +734,6 @@ for i in range (map1.m) :
     for j in range (map1.n):
         print(map1.grid[i][j].display_card(),end="\t")
     print("\n")
-<<<<<<< HEAD
   
 
 plyr1 = player("Khaled")
@@ -750,6 +749,3 @@ manche1.showRoles(Game)
 hand1 = plyr3.hand 
 hand1.DisplayHand ()
 """  
-=======
-"""    
->>>>>>> ceab6b21b77e5903ac1fa6ed5fdb2cfd9f3f5b52
