@@ -1,7 +1,7 @@
 print("Here's where we can code the Classes")
 
 import random
-import MP
+#import MP
 # Definition of the Mother class CARD
 class Card():
 
@@ -499,6 +499,28 @@ plyr2.hand.DisplayHand()
 idx=int(input("Please play a card \n"))
 tour1.play_action(idx,target_player=plyr3)
 tour1.show_actions(Game)"""
-map1 = MP.map()
-         
+class map():
+    def __init__(self,dec,n=9,m=5,start_coord=[2,0]):   
+        self.dec=dec
+        self.n=n
+        self.m=m
+        self.start_coord=start_coord
+        goalcards = self.dec["Goal"]
+        print(goalcards)
+        random.shuffle(goalcards)
+        print(len(goalcards))
+        grid= [ [ '' for i in range(n) ] for j in range(m) ] #creating an empty grid  
+        print("1")   
+        grid[2][0]= self.dec["Start"]#filling the starting card
+        #filling the goal cards
+        grid[0][8]=  goalcards[0]
+        grid[2][8]=  goalcards[1]
+        grid[4][8]=  goalcards[2]
+        self.grid=grid
+decc= create_dec()
+map1 = map(decc)
+for i in range (map1.m) :
+    for j in range (map1.n):
+        print(map1.grid[i][j],end="\t")
+    print("\n")
     
