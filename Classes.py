@@ -38,7 +38,11 @@ class PathCard(Card):
     
         shwd= f"({fst})\n({snd})\n({thd})"
         return shwd
-
+    def reverse(self):
+        self.name=self.name.replace('U','D')
+        self.name=self.name.replace('D','U')
+        self.name=self.name.replace('R','L')
+        self.name=self.name.replace('L','R')
 
 class ActionCard(Card):
     def display_card(self):
@@ -110,7 +114,9 @@ def create_dec():
                "Goal":[],
                "Path":[],
                "Gold":[]}
-
+# 1 card Start
+    S=PathCard("UDRL","NS")
+    card_list["Start"]=S
 # 4 cards Saboteurs
     for _ in range(4):
         S=Card("SAB")
