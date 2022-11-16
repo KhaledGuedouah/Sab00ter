@@ -680,25 +680,35 @@ class map():
                 print("Error : Card Position")
     
     def check_map (self) :
+        """
         x0,y0=self.start_coord[0],self.start_coord[1]
         xf1,yf = x0-2,y0+5
         xf2= x0
         xf3= x0+2
         x=[xf1,xf2,xf3]
 #checking surroundings of 1st goal card
-    """
+    
         if (yf<self.n):
-            if self.grid[i+1][yf].name!= "void" or self.grid[i][yf-1].name!= "void" or self.grid[i-1][yf].name!= "void" or self.grid[i][yf].name!= "void":
-        """
-            
+            if self.grid[xf1+1][yf].name!= "void" or self.grid[xf1][yf+1].name!= "void" or self.grid[xf1][yf-1].name!= "void":
+                self.grid[xf1][yf].revealed=True
+            if self.grid[xf2+1][yf].name!= "void" or self.grid[xf2-1][yf].name!= "void" or self.grid[xf2][yf+1].name!= "void" or self.grid[xf2][yf-1]:
+                self.grid[xf2][yf].revealed=True
+            if self.grid[xf3-1][yf].name!= "void" or self.grid[xf1][yf+1].name!= "void" or self.grid[xf1][yf-1].name!= "void":
+                self.grid[xf1][yf].revealed=True
+        if (xf1>0):
+            if self.grid[xf1+1][yf].name!= "void" or self.grid[xf1][yf+1].name!= "void" or self.grid[xf1][yf-1].name!= "void":
+                self.grid[xf1][yf].revealed=True
 
+    """
+"""
 
-        
-    """  x0,y0=self.start_coord[0],self.start_coord[1]
+        x0,y0=self.start_coord[0],self.start_coord[1]
         current_card = self.grid[x0][y0]
         while(True):
             if self.grid[x0+1][y0].name != "void":
                 current_card=self.grid[x0+1][y0]
+                if (current_card.name="Goal") :
+                    self.grid[x0+1][y0].revealed = True
                 x0+=1
             else:
                 x0,y0=self.start_coord[0],self.start_coord[1]
@@ -707,6 +717,8 @@ class map():
         while(True):
             if self.grid[x0-1][y0].name != "void":
                 current_card=self.grid[x0-1][y0]
+                if (current_card.name="Goal") :
+                    self.grid[x0+1][y0].revealed = True
                 y0+=1
             else:
                 x0,y0=self.start_coord[0],self.start_coord[1]
@@ -715,6 +727,8 @@ class map():
         while(True):
             if self.grid[x0][y0+1].name != "void":
                 current_card=self.grid[x0][y0+1]
+                if (current_card.name="Goal") :
+                    self.grid[x0+1][y0].revealed = True
                 y0+=1
             else:
                 x0,y0=self.start_coord[0],self.start_coord[1]
