@@ -491,6 +491,41 @@ class Tour():
             for crd in Game.players[i].actions:
                 print(crd,end="\t")
             print("")
+    
+    def check_path(self,carda,x_pos,y_pos,MAP=None):
+        a=False
+        for chr in carda.name:
+            if chr=='R':
+                a=self.check_card(x_pos,y_pos+1,MAP)
+                if a :
+                    return True
+            if chr=='L':
+                a=self.check_card(x_pos,y_pos-1,MAP)
+                if a :
+                    return True
+            if chr=='U':
+                a=self.check_card(x_pos-1,y_pos,MAP)
+                if a :
+                    return True
+            if chr=='D':
+                a=self.check_card(x_pos+1,y_pos-1,MAP)
+                if a :
+                    return True
+        return False
+
+    def check_card(self,x_pos,y_pos,MAP):
+        if x_pos ==MAP.m or x_pos == 0 :
+            return False
+        elif y_pos == MAP.n or y_pos == 0 :
+            return False
+        elif MAP.grid[x_pos][x_pos].name=="Start":
+            return True 
+        elif MAP.grid[x_pos][x_pos].name=="void":
+            return False
+        else:
+            self.check_path(MAP.grid[x_pos][x_pos],x_pos,y_pos,MAP=None)
+
+
     def play_path(self,IdxCard,x_pos,y_pos,MAP=None,reverse=0):
         
         cord=[[x_pos-1,y_pos,'U'],[x_pos,y_pos-1,'L'],[x_pos+1,y_pos,'D'],[x_pos,y_pos+1,'R']]
@@ -537,9 +572,6 @@ class Tour():
         cord=c
         print(cord)  
 
-
-
-
         go=False
         #condition_on_sides=MAP.grid[x_pos-1][y_pos].name!="void" or MAP.grid[x_pos][y_pos-1].name!="void" or MAP.grid[x_pos][y_pos+1].name!="void" or MAP.grid[x_pos+1][y_pos].name!="void"
        
@@ -561,6 +593,7 @@ class Tour():
 
         else:
             print("There is a card already played there")
+
     def play_card(self,IdxCard,x_pos=None,y_pos=None,map=None,target_player=None,idxCardtoRem=None):
 
         if type(self.current_player.hand.handCards[IdxCard])==type(ActionCard):
