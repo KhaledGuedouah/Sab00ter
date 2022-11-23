@@ -495,41 +495,50 @@ class Tour():
     def check_path(self,carda,x_pos,y_pos,MAP=None):
         a=False
         for chr in carda.name:
+            print(chr)
             if chr=='R':
                 a=self.check_card(x_pos,y_pos+1,MAP)
                 if a :
                     return True
+            print("there is no right")
             if chr=='L':
                 a=self.check_card(x_pos,y_pos-1,MAP)
                 if a :
                     return True
+            print("there is no left")
             if chr=='U':
                 a=self.check_card(x_pos-1,y_pos,MAP)
                 if a :
                     return True
+            print("there is no up")
             if chr=='D':
-                a=self.check_card(x_pos+1,y_pos-1,MAP)
+                a=self.check_card(x_pos+1,y_pos,MAP)
                 if a :
                     return True
+            print("there is no down")
         return False
 
     def check_card(self,x_pos,y_pos,MAP):
-        if x_pos ==MAP.m or x_pos == 0 :
+        if x_pos >=MAP.m or x_pos < 0:
+            print("Out Of X")
             return False
-        elif y_pos == MAP.n or y_pos == 0 :
+        elif y_pos >= MAP.n or y_pos < 0 :
+            print("Out Of Y")
             return False
-        elif MAP.grid[x_pos][x_pos].name=="Start":
+        elif MAP.grid[x_pos][y_pos].name=="UDRL":
             return True 
-        elif MAP.grid[x_pos][x_pos].name=="void":
+        elif MAP.grid[x_pos][y_pos].name=="void":
+            print("Void")
             return False
         else:
-            self.check_path(MAP.grid[x_pos][x_pos],x_pos,y_pos,MAP=None)
+            self.check_path(MAP.grid[x_pos][y_pos],x_pos,y_pos,MAP)
 
 
-    def play_path(self,IdxCard,x_pos,y_pos,MAP=None,reverse=0):
-        
-        cord=[[x_pos-1,y_pos,'U'],[x_pos,y_pos-1,'L'],[x_pos+1,y_pos,'D'],[x_pos,y_pos+1,'R']]
-        cord = [[x_pos - 1, y_pos, 'U'], [x_pos, y_pos - 1, 'L'], [x_pos + 1, y_pos, 'D'], [x_pos, y_pos + 1, 'R']]
+    def play_path(self,IdxCard,x_pos,y_pos,MAP,reverse=0):
+        m = MAP.m
+        n=MAP.n
+        cord=[[x_pos-1,y_pos,'U','D'],[x_pos,y_pos-1,'L','R'],[x_pos+1,y_pos,'D','U'],[x_pos,y_pos+1,'R','L']]
+      #  cord = [[x_pos - 1, y_pos, 'U'], [x_pos, y_pos - 1, 'L'], [x_pos + 1, y_pos, 'D'], [x_pos, y_pos + 1, 'R']]
         cx=[]
         cy=[]
         if (x_pos == 0):
@@ -576,19 +585,45 @@ class Tour():
         #condition_on_sides=MAP.grid[x_pos-1][y_pos].name!="void" or MAP.grid[x_pos][y_pos-1].name!="void" or MAP.grid[x_pos][y_pos+1].name!="void" or MAP.grid[x_pos+1][y_pos].name!="void"
        
         if(MAP.grid[x_pos][y_pos].name=="void"):
+            print("dkhelna")
             for crd in cord:
-                if MAP.grid[crd[0]][crd[1]].name=="void":
+                print(crd)
+                cond_on_crd = crd[3] in MAP.grid[crd[0]][crd[1]].name 
+                cond_on_ncrd = crd[2] in self.current_player.hand.handCards[IdxCard].name
+                print(cond_on_crd,cond_on_ncrd)
+            
+                if (MAP.grid[crd[0]][crd[1]].name=="void"):
+                    print("void")
                     pass
-                elif crd[3] in self.current_player.hand.handCards[IdxCard].name:
+                elif ((cond_on_ncrd) and (cond_on_crd )) :
+                    
                     go=True
-                    pass
+                    print("concored true")
+                elif (not (cond_on_ncrd) and not (cond_on_crd )) :
+                    
+                    go=True
+                    print("concored true")
                 else:
                     go=False
+                    print("brikina")
                     break
             if go:
-                MAP.grid[x_pos][y_pos]=self.current_player.hand.handCards[IdxCard]
+                if ( self.check_path(self.current_player.hand.handCards[IdxCard],x_pos,y_pos,MAP)) :
+                    MAP.update_map(self.current_player.hand.handCards[IdxCard],x_pos,y_pos)
+                    print("card played hahaha")
+                else : 
+                    print("card cannot be played")
+            else : 
+                print("wlh ghir nqol")
+                 
+                    
 
 
+
+
+                #MAP.grid[x_pos][y_pos]=self.current_player.hand.handCards[IdxCard]
+
+        
             
 
         else:
@@ -707,12 +742,12 @@ class map():
         else : 
             if(self.grid[x][y].name == "void"):
                 self.grid[x][y]=Cardplayed
-            elif (self.grid[x][y].name != "RoF"):
+            elif (self.grid[x][y].name == "RoF"):
                 self.grid[x][y]= VoidCard()
             else :
                 print("Error : Card Position")
     
-    def check_map (self) :
+    #def check_map (self) :
         """
         x0,y0=self.start_coord[0],self.start_coord[1]
         xf1,yf = x0-2,y0+5
@@ -769,20 +804,12 @@ class map():
 
         """
 
+
+
+  
 decc= create_dec()
 map1 = map(decc)
-map1.update_map(decc["Path"][0],2,4)
-
-
 map1.display_map()
-print(map1.start_coord)
-"""
-for i in range (map1.m) :
-    for j in range (map1.n):
-        print(map1.grid[i][j].display_card(),end="\t")
-    print("\n")
-  
-
 plyr1 = player("Khaled")
 plyr2 = player("Feriel")
 plyr3 = player("Assil")
@@ -791,8 +818,13 @@ manche1 = manche()
 manche1.DistributeRoles(Game)
 manche1.DistributeCards(Game)
 manche1.showRoles(Game)
-#print(plyr1.role , plyr2.role , plyr3.role)
+tour1=Tour(plyr3)
 
 hand1 = plyr3.hand 
-hand1.DisplayHand ()
-"""  
+hand1.DisplayHand()
+
+idx = int(input("please enter a path card"))
+tour1.play_path(idx,1,4,map1,reverse=0)
+map1.display_map()
+
+
