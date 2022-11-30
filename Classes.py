@@ -763,62 +763,65 @@ class map():
             else :
                 print("Error : Card Position")
     
-    #def check_map (self) :
-        """
+    def check_map (self) :
+    
         x0,y0=self.start_coord[0],self.start_coord[1]
-        xf1,yf = x0-2,y0+5
+        xf1,yf = x0-2,y0+8
         xf2= x0
         xf3= x0+2
         x=[xf1,xf2,xf3]
-#checking surroundings of 1st goal card
-    
-        if (yf<self.n):
+
+        #checking expansion from the right on y 
+        if (yf<self.n-1): 
+            print
+            print("expansion from right")
+            # top card
             if self.grid[xf1+1][yf].name!= "void" or self.grid[xf1][yf+1].name!= "void" or self.grid[xf1][yf-1].name!= "void":
                 self.grid[xf1][yf].revealed=True
-            if self.grid[xf2+1][yf].name!= "void" or self.grid[xf2-1][yf].name!= "void" or self.grid[xf2][yf+1].name!= "void" or self.grid[xf2][yf-1]:
+            # middle card
+            if self.grid[xf2+1][yf].name!= "void" or self.grid[xf2-1][yf].name!= "void" or self.grid[xf2][yf+1].name!= "void" or self.grid[xf2][yf-1].name!="void":
                 self.grid[xf2][yf].revealed=True
-            if self.grid[xf3-1][yf].name!= "void" or self.grid[xf1][yf+1].name!= "void" or self.grid[xf1][yf-1].name!= "void":
-                self.grid[xf1][yf].revealed=True
+            # bottom card
+            if self.grid[xf3-1][yf].name!= "void" or self.grid[xf3][yf+1].name!= "void" or self.grid[xf3][yf-1].name!= "void":
+                self.grid[xf3][yf].revealed=True
+        #checking expansion from top
         if (xf1>0):
-            if self.grid[xf1+1][yf].name!= "void" or self.grid[xf1][yf+1].name!= "void" or self.grid[xf1][yf-1].name!= "void":
+            print("expansion from top")
+            #top card
+            if self.grid[xf1-1][yf].name!= "void" or self.grid[xf1+1][yf].name!= "void" or self.grid[xf1][yf-1].name!= "void":
                 self.grid[xf1][yf].revealed=True
+            #middle card
+            if self.grid[xf2+1][yf].name!= "void" or self.grid[xf2-1][yf].name!= "void" or self.grid[xf2][yf-1].name!="void":
+                self.grid[xf2][yf].revealed=True
+            # bottom card
+            if self.grid[xf3-1][yf].name!= "void" or self.grid[xf3][yf-1].name!= "void":
+                self.grid[xf3][yf].revealed=True
+        #checking expansion from bottom
+        if (xf3<self.m-1):
+            print("expansion from bottom")
+            #top card
+            if self.grid[xf1+1][yf].name!= "void" or self.grid[xf1][yf-1].name!= "void":
+                self.grid[xf1][yf].revealed=True
+            #middle card
+            if self.grid[xf2+1][yf].name!= "void" or self.grid[xf2-1][yf].name!= "void" or self.grid[xf2][yf-1].name!="void":
+                self.grid[xf2][yf].revealed=True
+            # bottom card
+            if self.grid[xf3-1][yf].name!= "void" or self.grid[xf3][yf-1].name!= "void" or self.grid[xf3+1][yf].name!= "void":
+                self.grid[xf3][yf].revealed=True
+        
+        #checking for no expansion
+        if (xf3==self.m-1 and xf1==0 and yf==self.n-1):
+            print("no expansion")
+            # top card
+            if self.grid[xf1][yf-1].name!= "void" or self.grid[xf1+1][yf].name!= "void":
+                self.grid[xf1][yf].revealed=True
+            # middle card
+            if self.grid[xf2+1][yf].name!= "void" or self.grid[xf2-1][yf].name!= "void" or self.grid[xf2][yf-1].name!="void":
+                self.grid[xf2][yf].revealed=True
+            # bottom card
+            if self.grid[xf3-1][yf].name!= "void" or self.grid[xf3][yf-1].name!= "void" :
+                self.grid[xf3][yf].revealed=True
 
-    """
-"""
-
-        x0,y0=self.start_coord[0],self.start_coord[1]
-        current_card = self.grid[x0][y0]
-        while(True):
-            if self.grid[x0+1][y0].name != "void":
-                current_card=self.grid[x0+1][y0]
-                if (current_card.name="Goal") :
-                    self.grid[x0+1][y0].revealed = True
-                x0+=1
-            else:
-                x0,y0=self.start_coord[0],self.start_coord[1]
-                break
-
-        while(True):
-            if self.grid[x0-1][y0].name != "void":
-                current_card=self.grid[x0-1][y0]
-                if (current_card.name="Goal") :
-                    self.grid[x0+1][y0].revealed = True
-                y0+=1
-            else:
-                x0,y0=self.start_coord[0],self.start_coord[1]
-                break
-            
-        while(True):
-            if self.grid[x0][y0+1].name != "void":
-                current_card=self.grid[x0][y0+1]
-                if (current_card.name="Goal") :
-                    self.grid[x0+1][y0].revealed = True
-                y0+=1
-            else:
-                x0,y0=self.start_coord[0],self.start_coord[1]
-                break            
-
-        """
 
 
 
@@ -838,11 +841,10 @@ manche1.showRoles(Game)
 tour1=Tour(plyr3)
 
 hand1 = plyr3.hand 
-idx = int(input("please enter an action on path"))
-tour1.action_on_map (idx,map1,2,1)
-map1.display_map()
 
-for i in range (4):
+
+
+for i in range (10):
     hand1.DisplayHand()
     idx = int(input("please enter a path card "))
     x_corda=int(input("please enter X "))
@@ -851,7 +853,10 @@ for i in range (4):
     if rev =='Y':
         hand1.handCards[idx].reverse()
     hand1.DisplayHand()
+    
     tour1.play_path(idx,x_corda,y_corda,map1)
+    map1.check_map ()
     map1.display_map()
+    
 
 
