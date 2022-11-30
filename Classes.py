@@ -40,10 +40,11 @@ class PathCard(Card):
         shwd= f"({fst})\n({snd})\n({thd})"
         return shwd
     def reverse(self):
-        self.name=self.name.replace('U','D')
-        self.name=self.name.replace('D','U')
-        self.name=self.name.replace('R','L')
-        self.name=self.name.replace('L','R')
+        self.name=self.name.replace('U','d')
+        self.name=self.name.replace('D','u')
+        self.name=self.name.replace('R','l')
+        self.name=self.name.replace('L','r')
+        self.name=self.name.upper()
 
 class ActionCard(Card):
     def display_card(self):
@@ -492,35 +493,44 @@ class Tour():
                 print(crd,end="\t")
             print("")
     
-    def check_path(self,carda,x_pos,y_pos,MAP=None):
+    def check_path(self,carda,x_pos,y_pos,MAP=None,not_check=None):
         a=False
         for chr in carda.name:
             print(chr)
+            if chr == not_check :
+                print("passi",chr)
+                continue
             if chr=='R':
-                a=self.check_card(x_pos,y_pos+1,MAP)
+                print("We check",chr)
+                a=self.check_card(x_pos,y_pos+1,MAP,not_check='L')
                 if a :
                     return True
-            print("there is no right")
+            #print("there is no right")
             if chr=='L':
-                a=self.check_card(x_pos,y_pos-1,MAP)
+                print("We check",chr)
+                a=self.check_card(x_pos,y_pos-1,MAP,not_check='R')
                 if a :
                     return True
-            print("there is no left")
+            #print("there is no left")
             if chr=='U':
-                a=self.check_card(x_pos-1,y_pos,MAP)
+                print("We check",chr)
+                a=self.check_card(x_pos-1,y_pos,MAP,not_check='D')
                 if a :
                     return True
-            print("there is no up")
+            #1print("there is no up")
             if chr=='D':
-                a=self.check_card(x_pos+1,y_pos,MAP)
+                print("We check",chr)
+                a=self.check_card(x_pos+1,y_pos,MAP,not_check='U')
                 if a :
                     return True
-            print("there is no down")
+            #print("there is no down")$
+        print(a)
         return False
 
-    def check_card(self,x_pos,y_pos,MAP):
+    def check_card(self,x_pos,y_pos,MAP,not_check=None):
+        print (MAP.grid[x_pos][y_pos])
         if x_pos >=MAP.m or x_pos < 0:
-            print("Out Of X")
+            print("Out Of big X")
             return False
         elif y_pos >= MAP.n or y_pos < 0 :
             print("Out Of Y")
@@ -531,10 +541,10 @@ class Tour():
             print("Void")
             return False
         else:
-            self.check_path(MAP.grid[x_pos][y_pos],x_pos,y_pos,MAP)
+            return self.check_path(MAP.grid[x_pos][y_pos],x_pos,y_pos,MAP,not_check)
 
 
-    def play_path(self,IdxCard,x_pos,y_pos,MAP,reverse=0):
+    def play_path(self,IdxCard,x_pos,y_pos,MAP):
         m = MAP.m
         n=MAP.n
         cord=[[x_pos-1,y_pos,'U','D'],[x_pos,y_pos-1,'L','R'],[x_pos+1,y_pos,'D','U'],[x_pos,y_pos+1,'R','L']]
@@ -815,16 +825,25 @@ plyr2 = player("Feriel")
 plyr3 = player("Assil")
 Game = game([plyr1,plyr2,plyr3])
 manche1 = manche()
+
 manche1.DistributeRoles(Game)
 manche1.DistributeCards(Game)
 manche1.showRoles(Game)
 tour1=Tour(plyr3)
 
 hand1 = plyr3.hand 
-hand1.DisplayHand()
 
-idx = int(input("please enter a path card"))
-tour1.play_path(idx,1,4,map1,reverse=0)
-map1.display_map()
+
+for i in range (4):
+    hand1.DisplayHand()
+    idx = int(input("please enter a path card "))
+    x_corda=int(input("please enter X "))
+    y_corda=int(input("please enter y "))
+    rev=input("Do you want to reverse [Y/N]")
+    if rev =='Y':
+        hand1.handCards[idx].reverse()
+    hand1.DisplayHand()
+    tour1.play_path(idx,x_corda,y_corda,map1,reverse=0)
+    map1.display_map()
 
 
