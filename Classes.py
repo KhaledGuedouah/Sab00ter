@@ -469,23 +469,29 @@ class Tour():
                     target_player.actions.pop(idxCardtoRem) # case where the player have to chose
                 print("The action card cannot be played for the target_player")
 
-    def action_on_map (self,IdxCard,map,x,y):
+    def action_on_map (self,IdxCard,Map,x,y):
+        x0 = Map.start_coord[0]
+        y0 = Map.start_coord[1]
         if (self.current_player.hand.handCards[IdxCard].name == "RoF") :
             print("raa3333")
+            Map.update_map(self.current_player.hand.handCards[IdxCard],x,y)
         elif (self.current_player.hand.handCards[IdxCard].name == "MAP") :
-            print("Show us the nugget")
+            print("Which card do you want to see")
+            print("Up : 'U' | Down : D | Middle : M")
+            choice = input()
+            while not(choice == 'U' or choice == 'M' or choice == 'M'):
+                print("please enter Up : 'U' | Down : D | Middle : M" )
+                choice = input()
+            if (choice == 'U') : 
+                print(Map.grid[x0-2][y0+8].show_card())
+            elif(choice == 'D'):
+                print(Map.grid[x0+2][y0+8].show_card())
+            elif (choice == 'M'):
+                print(Map.grid[x0][y0+8].show_card())
+            else :
+                print("Error Up Down Middle ")
         else :
             print("Error")
-    def play_action(self,IdxCard,map=None,target_player=None,idxCardtoRem=None) :
-        if (target_player == None) and (map != None) : 
-            print("1")
-            self.action_on_map (IdxCard,map)
-            
-        elif (target_player!=None) :
-            print("2")
-            self.action_on_player(target_player,IdxCard,idxCardtoRem)
-            
-        else : print("Error")
     def show_actions(self,Game) :
         for i in range(len(Game.players)):
             print(f"Action cards played on {Game.players[i].name}")
@@ -832,7 +838,9 @@ manche1.showRoles(Game)
 tour1=Tour(plyr3)
 
 hand1 = plyr3.hand 
-
+idx = int(input("please enter an action on path"))
+tour1.action_on_map (idx,map1,2,1)
+map1.display_map()
 
 for i in range (4):
     hand1.DisplayHand()
@@ -843,7 +851,7 @@ for i in range (4):
     if rev =='Y':
         hand1.handCards[idx].reverse()
     hand1.DisplayHand()
-    tour1.play_path(idx,x_corda,y_corda,map1,reverse=0)
+    tour1.play_path(idx,x_corda,y_corda,map1)
     map1.display_map()
 
 
