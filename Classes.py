@@ -477,9 +477,9 @@ class Tour():
             Map.update_map(self.current_player.hand.handCards[IdxCard],x,y)
         elif (self.current_player.hand.handCards[IdxCard].name == "MAP") :
             print("Which card do you want to see")
-            print("Up : 'U' | Down : D | Middle : M")
+            print("Up : U | Down : D | Middle : M")
             choice = input()
-            while not(choice == 'U' or choice == 'M' or choice == 'M'):
+            while not(choice == 'U' or choice == 'D' or choice == 'M'):
                 print("please enter Up : 'U' | Down : D | Middle : M" )
                 choice = input()
             if (choice == 'U') : 
@@ -534,7 +534,7 @@ class Tour():
         return False
 
     def check_card(self,x_pos,y_pos,MAP,not_check=None):
-        print (MAP.grid[x_pos][y_pos])
+        #print (MAP.grid[x_pos][y_pos])
         if x_pos >=MAP.m or x_pos < 0:
             print("Out Of big X")
             return False
@@ -551,8 +551,8 @@ class Tour():
 
 
     def play_path(self,IdxCard,x_pos,y_pos,MAP):
-        m = MAP.m
-        n=MAP.n
+        m = MAP.m #5
+        n=MAP.n #9
         cord=[[x_pos-1,y_pos,'U','D'],[x_pos,y_pos-1,'L','R'],[x_pos+1,y_pos,'D','U'],[x_pos,y_pos+1,'R','L']]
       #  cord = [[x_pos - 1, y_pos, 'U'], [x_pos, y_pos - 1, 'L'], [x_pos + 1, y_pos, 'D'], [x_pos, y_pos + 1, 'R']]
         cx=[]
@@ -594,14 +594,30 @@ class Tour():
                 c.append(elem)
 
 
+            
+
+
         cord=c
-        print(cord)  
+        print(cord) 
+        print(x_pos,y_pos) 
+        print(MAP.n,MAP.m)
+
+        if x_pos==MAP.m or x_pos==-1 or y_pos==MAP.n or y_pos==-1:
+            print('we gonna void it on')
+            vide=VoidCard()
+            MAP.update_map(vide,x_pos,y_pos)
+            if x_pos==-1:
+                x_pos=0
+                cord=[[x_pos+1,y_pos,'D','U']]
+            if y_pos==-1:
+                y_pos=0 
+                cord=[[x_pos,y_pos+1,'R','L']]
 
         go=False
         #condition_on_sides=MAP.grid[x_pos-1][y_pos].name!="void" or MAP.grid[x_pos][y_pos-1].name!="void" or MAP.grid[x_pos][y_pos+1].name!="void" or MAP.grid[x_pos+1][y_pos].name!="void"
        
         if(MAP.grid[x_pos][y_pos].name=="void"):
-            print("dkhelna")
+            print("Void place, A card can be played here")
             for crd in cord:
                 print(crd)
                 cond_on_crd = crd[3] in MAP.grid[crd[0]][crd[1]].name 
@@ -611,6 +627,25 @@ class Tour():
                 if (MAP.grid[crd[0]][crd[1]].name=="void"):
                     print("void")
                     pass
+                elif  isinstance (MAP.grid[crd[0]][crd[1]],GoalCard) :   #Goal card
+                    
+                    if ( cond_on_ncrd == True ) and ( MAP.grid[crd[0]][crd[1]].revealed==False ):
+                        print('we show the card')
+                        MAP.grid[crd[0]][crd[1]].revealed=True
+                        if cond_on_crd==False:
+                            print('Revere GOAL ')
+                            MAP.grid[crd[0]][crd[1]].reverse()
+                            go=True
+                            
+                    elif ((cond_on_ncrd) and (cond_on_crd )) or (not (cond_on_ncrd) and not (cond_on_crd )):
+                            go=True
+                            print('fixed goal true')
+                    else:
+                        print('fixed goal false')
+                        go= False
+                        break
+                    print("GOAL true")
+
                 elif ((cond_on_ncrd) and (cond_on_crd )) :
                     
                     go=True
@@ -644,6 +679,7 @@ class Tour():
 
         else:
             print("There is a card already played there")
+
 
     def play_card(self,IdxCard,x_pos=None,y_pos=None,map=None,target_player=None,idxCardtoRem=None):
 
@@ -841,19 +877,20 @@ manche1.showRoles(Game)
 tour1=Tour(plyr3)
 
 hand1 = plyr3.hand 
-idx = int(input("please enter an action on path"))
-tour1.action_on_map (idx,map1,2,1)
-map1.display_map()
+#hand1.DisplayHand()
+#idx = int(input("please enter an action on path "))
+#tour1.action_on_map (idx,map1,2,1)
+#map1.display_map()
 
-for i in range (10):
+for i in range (100):
     hand1.DisplayHand()
     idx = int(input("please enter a path card "))
     x_corda=int(input("please enter X "))
     y_corda=int(input("please enter y "))
-    rev=input("Do you want to reverse [Y/N]")
-    if rev =='Y':
-        hand1.handCards[idx].reverse()
-    hand1.DisplayHand()
+    #rev=input("Do you want to reverse [Y/N]")
+    #if rev =='Y':
+        #hand1.handCards[idx].reverse()
+    #hand1.DisplayHand()
     tour1.play_path(idx,x_corda,y_corda,map1)
     map1.display_map()
 
