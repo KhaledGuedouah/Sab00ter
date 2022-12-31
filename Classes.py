@@ -474,7 +474,9 @@ class Tour():
         y0 = Map.start_coord[1]
         if (self.current_player.hand.handCards[IdxCard].name == "RoF") :
             print("raa3333")
-            Map.update_map(self.current_player.hand.handCards[IdxCard],x,y)
+            xd = int(input('Please enter X: '))
+            yd= int(input('Please enter Y: '))
+            Map.update_map(self.current_player.hand.handCards[IdxCard],xd,yd)
         elif (self.current_player.hand.handCards[IdxCard].name == "MAP") :
             print("Which card do you want to see")
             print("Up : U | Down : D | Middle : M")
@@ -796,10 +798,10 @@ class map():
             self.n+=1
             self.start_coord[1]+=1
         else : 
-            if(self.grid[x][y].name == "void"):
-                self.grid[x][y]=Cardplayed
-            elif (self.grid[x][y].name == "RoF"):
+            if (Cardplayed.name == "RoF"):
                 self.grid[x][y]= VoidCard()
+            elif(self.grid[x][y].name == "void"):
+                self.grid[x][y]=Cardplayed
             else :
                 print("Error : Card Position")
     
@@ -889,13 +891,17 @@ hand1 = plyr3.hand
 for i in range (100):
     hand1.DisplayHand()
     idx = int(input("please enter a path card "))
-    x_corda=int(input("please enter X "))
-    y_corda=int(input("please enter y "))
+    if isinstance(hand1.handCards[idx],PathCard):
+        x_corda=int(input("please enter X "))
+        y_corda=int(input("please enter y "))
+        tour1.play_path(idx,x_corda,y_corda,map1)
+    elif isinstance(hand1.handCards[idx],ActionCard):
+        tour1.action_on_map (idx,map1,2,1)
     #rev=input("Do you want to reverse [Y/N]")
     #if rev =='Y':
         #hand1.handCards[idx].reverse()
     #hand1.DisplayHand()
-    tour1.play_path(idx,x_corda,y_corda,map1)
+    
     map1.display_map()
 
 
