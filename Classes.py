@@ -368,7 +368,7 @@ class hand () :
             if  self.handCards[i] == CardtoThrow : 
                 self.handCards.pop(i)
                 break
-            else : print("Error")
+            else : print("don't throw this")
     def AddCard (self,CardtoAdd):
         if len(self.handCards) < self.number_cards :
             self.handCards.append(CardtoAdd)
@@ -439,11 +439,26 @@ class manche () :
         for i in range(len(Game.players)) : 
             Game.players[i].hand = hand(random_cards(avcards,nm_cr),nm_cr)
         self.stockpile = avcards
+    def play_tour(self,tour,map):
+        for pl in Game.players:
+            tour.nextplayer(pl) 
+            hand1=tour.current_player.hand
+            hand1.DisplayHand()
+            idx = int(input("please enter a card "))
+            tour.play_card(idx)
+            hand1.Throwcard(hand1.handCards[idx])
+            hand1.AddCard(manche1.stockpile.pop())
+    
+            map.display_map()
+            tour.show_actions(Game)
+
 def random_cards(avcards,num_cr) :
     cards = []
     for i in range(num_cr) : 
         cards.append(avcards.pop(random.randrange(len(avcards))))      
     return cards
+
+
 
 
 
@@ -465,9 +480,12 @@ class Tour():
             if (len(target_player.actions)==0) : 
                 print("No action cards in the player's hand")
             else :
-                if (target_player.actions[idxCardtoRem].name in self.current_player.hand.handCards[IdxCard].name):
-                    target_player.actions.pop(idxCardtoRem) # case where the player have to chose
-                print("The action card cannot be played for the target_player")
+                for idxCardtoRem in range(len(target_player.actions)):
+                    if (target_player.actions[idxCardtoRem].name in self.current_player.hand.handCards[IdxCard].name):
+                        target_player.actions.pop(idxCardtoRem) # case where the player have to chose
+                        break
+        else:
+            print("The action card cannot be played for the target_player")
 
     def action_on_map (self,IdxCard,Map,x,y):
         x0 = Map.start_coord[0]
@@ -541,11 +559,11 @@ class Tour():
         if x_pos >=MAP.m or x_pos < 0:
             print("Out Of big X")
             return False
-        elif MAP.grid[x_pos][y_pos].function == "Nx":
-            print("Hole")
-            return False
         elif y_pos >= MAP.n or y_pos < 0 :
             print("Out Of Y")
+            return False
+        elif MAP.grid[x_pos][y_pos].function == "Nx":
+            print("Hole")
             return False
         elif MAP.grid[x_pos][y_pos].name=="UDRL":
             return True 
@@ -642,6 +660,8 @@ class Tour():
                             print('Revere GOAL ')
                             MAP.grid[crd[0]][crd[1]].reverse()
                             go=True
+                        if 'G' in MAP.grid[crd[0]][crd[1]].function:
+                           manche1.Inprogess = True
                             
                     elif ((cond_on_ncrd) and (cond_on_crd )) or (not (cond_on_ncrd) and not (cond_on_crd )):
                             go=True
@@ -687,8 +707,24 @@ class Tour():
             print("There is a card already played there")
 
 
-    def play_card(self,IdxCard,x_pos=None,y_pos=None,map=None,target_player=None,idxCardtoRem=None):
+    def play_card(self,idx,x_pos=None,y_pos=None,map=None,target_player=None,idxCardtoRem=None):
 
+        if isinstance(self.current_player.hand.handCards[idx],PathCard):
+            x_corda=int(input("please enter X "))
+            y_corda=int(input("please enter y "))
+            rev=input("Do you want to reverse [Y/N]")
+            if rev =='Y':
+                self.current_player.hand.handCards[idx].reverse()
+            self.play_path(idx,x_corda,y_corda,map1)
+        elif isinstance(self.current_player.hand.handCards[idx],ActionCard):
+            if self.current_player.hand.handCards[idx].name in ["MAP","RoF"] :
+                self.action_on_map (idx,map1,2,1)
+            else:
+                for i in range(len(Game.players)):
+                    print(f'-{i}- {Game.players[i].name}')
+                target=int(input('Enter a number :'))
+                self.action_on_player(Game.players[target],idx)
+""""
         if type(self.current_player.hand.handCards[IdxCard])==type(ActionCard):
 
             self.play_action(IdxCard=IdxCard,map=map,target_player=target_player,idxCardtoRem=idxCardtoRem)
@@ -698,7 +734,7 @@ class Tour():
             self.play_path(IdxCard=IdxCard,map=map,target_player=target_player,idxCardtoRem=idxCardtoRem)
         else:
             print("Error type of card invalid")
-
+"""
 
         
 
@@ -880,28 +916,72 @@ manche1 = manche()
 manche1.DistributeRoles(Game)
 manche1.DistributeCards(Game)
 manche1.showRoles(Game)
-tour1=Tour(plyr3)
 
-hand1 = plyr3.hand 
+#tour1=Tour(plyr3) 
+#hand1=tour1.current_player.hand
 #hand1.DisplayHand()
 #idx = int(input("please enter an action on path "))
 #tour1.action_on_map (idx,map1,2,1)
 #map1.display_map()
 
-for i in range (100):
+manche_done=False
+
+
+while  manche1.Inprogess == False:
+    tour1=Tour(Game.players[0])
+    manche1.play_tour(tour1,map1)
+
+
+'''
+for pl in Game.players:
+    tour1.nextplayer(pl) 
+    hand1=tour1.current_player.hand
     hand1.DisplayHand()
-    idx = int(input("please enter a path card "))
+    idx = int(input("please enter a card "))
+    tour1.play_card(idx)
+    hand1.Throwcard(hand1.handCards[idx])
+    hand1.AddCard(manche1.stockpile.pop())
+    
+    map1.display_map()
+    tour1.show_actions(Game)
+'''    
+
+
+
+"""
+    for i in range (100):
+    hand1.DisplayHand()
+    idx = int(input("please enter a card "))
+    tour1.play_card(idx)
+    
+    
     if isinstance(hand1.handCards[idx],PathCard):
         x_corda=int(input("please enter X "))
         y_corda=int(input("please enter y "))
+        rev=input("Do you want to reverse [Y/N]")
+        if rev =='Y':
+            hand1.handCards[idx].reverse()
         tour1.play_path(idx,x_corda,y_corda,map1)
     elif isinstance(hand1.handCards[idx],ActionCard):
-        tour1.action_on_map (idx,map1,2,1)
+        if hand1.handCards[idx].name in ["MAP","RoF"] :
+            tour1.action_on_map (idx,map1,2,1)
+        else:
+            for i in range(len(Game.players)):
+                print(f'-{i}- {Game.players[i].name}')
+            target=int(input('Enter a number :'))
+            tour1.action_on_player(Game.players[target],idx)
+    
     #rev=input("Do you want to reverse [Y/N]")
     #if rev =='Y':
         #hand1.handCards[idx].reverse()
     #hand1.DisplayHand()
+"""
+"""
+    hand1.Throwcard(hand1.handCards[idx])
+    hand1.AddCard(manche1.stockpile.pop())
     
     map1.display_map()
+    tour1.show_actions(Game)
+"""
 
 
