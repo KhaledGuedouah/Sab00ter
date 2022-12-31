@@ -535,8 +535,12 @@ class Tour():
 
     def check_card(self,x_pos,y_pos,MAP,not_check=None):
         #print (MAP.grid[x_pos][y_pos])
+        
         if x_pos >=MAP.m or x_pos < 0:
             print("Out Of big X")
+            return False
+        elif MAP.grid[x_pos][y_pos].function == "Nx":
+            print("Hole")
             return False
         elif y_pos >= MAP.n or y_pos < 0 :
             print("Out Of Y")
