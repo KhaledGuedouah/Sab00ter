@@ -439,14 +439,20 @@ class manche () :
         for i in range(len(Game.players)) : 
             Game.players[i].hand = hand(random_cards(avcards,nm_cr),nm_cr)
         self.stockpile = avcards
+
+
     def play_tour(self,tour,map):
         for pl in Game.players:
             tour.nextplayer(pl) 
             hand1=tour.current_player.hand
             hand1.DisplayHand()
             print(f"{tour.current_player.name}'s turn to play ")
-            idx = int(input("please enter a card "))
-            tour.play_card(idx)
+            idx = int(input("please enter a card or '-1' if you want to throw a card:  "))
+            if idx == -1:
+                 idx = int(input("please select a card to throw: "))
+                 print(hand1.handCards[idx],'thrown' )   
+            else :
+                tour.play_card(idx)
             hand1.Throwcard(hand1.handCards[idx])
             hand1.AddCard(manche1.stockpile.pop())
     
@@ -734,8 +740,10 @@ class Tour():
 
 
     def play_card(self,idx,x_pos=None,y_pos=None,map=None,target_player=None,idxCardtoRem=None):
-
-        if isinstance(self.current_player.hand.handCards[idx],PathCard):
+        if idx == -1:
+            idx = int(input("please select a card to throw: "))
+            print(self.current_player.hand.handCards[idx],'thrown' )   
+        elif isinstance(self.current_player.hand.handCards[idx],PathCard):
             if len(self.current_player.actions)==0:
                 x_corda=int(input("please enter X "))
                 y_corda=int(input("please enter y "))
