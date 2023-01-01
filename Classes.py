@@ -444,6 +444,7 @@ class manche () :
             tour.nextplayer(pl) 
             hand1=tour.current_player.hand
             hand1.DisplayHand()
+            print(f"{tour.current_player.name}'s turn to play ")
             idx = int(input("please enter a card "))
             tour.play_card(idx)
             hand1.Throwcard(hand1.handCards[idx])
@@ -451,6 +452,10 @@ class manche () :
     
             map.display_map()
             tour.show_actions(Game)
+
+            if self.Inprogess:
+                print('Partie terminé')
+                break 
 
 def random_cards(avcards,num_cr) :
     cards = []
@@ -470,10 +475,10 @@ class Tour():
 
     def action_on_player(self,target_player,IdxCard,idxCardtoRem = None):
         if (self.current_player.hand.handCards[IdxCard].function == "Nx") : 
-            if ( ( self.current_player.hand.handCards[IdxCard] in target_player.actions) or (len(target_player.actions))==3 ) :
+            if ( ( self.current_player.hand.handCards[IdxCard].name in target_player.actions) or (len(target_player.actions))==3 ) :
                 print("Cannot play this card") #Go back to choice 
             elif(len(target_player.actions)<3):
-                target_player.actions.append(self.current_player.hand.handCards[IdxCard])
+                target_player.actions.append(self.current_player.hand.handCards[IdxCard].name)
             else : 
                 print("error")
         elif (self.current_player.hand.handCards[IdxCard].function == "N+"):
@@ -481,8 +486,11 @@ class Tour():
                 print("No action cards in the player's hand")
             else :
                 for idxCardtoRem in range(len(target_player.actions)):
-                    if (target_player.actions[idxCardtoRem].name in self.current_player.hand.handCards[IdxCard].name):
-                        target_player.actions.pop(idxCardtoRem) # case where the player have to chose
+                    print(target_player.actions[idxCardtoRem])
+                    print(self.current_player.hand.handCards[IdxCard].name)
+                    if (target_player.actions[idxCardtoRem][1] in self.current_player.hand.handCards[IdxCard].name):
+                        target_player.actions.pop(idxCardtoRem)
+                        print('we took it off') # case where the player have to chose
                         break
         else:
             print("The action card cannot be played for the target_player")
@@ -660,7 +668,7 @@ class Tour():
                             print('Revere GOAL ')
                             MAP.grid[crd[0]][crd[1]].reverse()
                             go=True
-                        if 'G' in MAP.grid[crd[0]][crd[1]].function:
+                        if 'G' in MAP.grid[crd[0]][crd[1]].value:
                            manche1.Inprogess = True
                             
                     elif ((cond_on_ncrd) and (cond_on_crd )) or (not (cond_on_ncrd) and not (cond_on_crd )):
