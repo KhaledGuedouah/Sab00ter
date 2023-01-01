@@ -476,18 +476,21 @@ class Tour():
     def action_on_player(self,target_player,IdxCard,idxCardtoRem = None):
         if (self.current_player.hand.handCards[IdxCard].function == "Nx") : 
             if ( ( self.current_player.hand.handCards[IdxCard].name in target_player.actions) or (len(target_player.actions))==3 ) :
-                print("Cannot play this card") #Go back to choice 
+                print("Cannot play this card")
+                self.replay_card() #Go back to choice 
             elif(len(target_player.actions)<3):
                 target_player.actions.append(self.current_player.hand.handCards[IdxCard].name)
             else : 
                 print("error")
+                self.replay_card()
         elif (self.current_player.hand.handCards[IdxCard].function == "N+"):
             if (len(target_player.actions)==0) : 
                 print("No action cards in the player's hand")
+                self.replay_card()
             else :
                 for idxCardtoRem in range(len(target_player.actions)):
-                    print(target_player.actions[idxCardtoRem])
-                    print(self.current_player.hand.handCards[IdxCard].name)
+                    #print(target_player.actions[idxCardtoRem])
+                    #print(self.current_player.hand.handCards[IdxCard].name)
                     if (target_player.actions[idxCardtoRem][1] in self.current_player.hand.handCards[IdxCard].name):
                         target_player.actions.pop(idxCardtoRem)
                         print('we took it off') # case where the player have to chose
@@ -499,7 +502,7 @@ class Tour():
         x0 = Map.start_coord[0]
         y0 = Map.start_coord[1]
         if (self.current_player.hand.handCards[IdxCard].name == "RoF") :
-            print("raa3333")
+            print("Rocks falling watch out !")
             xd = int(input('Please enter X: '))
             yd= int(input('Please enter Y: '))
             Map.update_map(self.current_player.hand.handCards[IdxCard],xd,yd)
@@ -518,8 +521,11 @@ class Tour():
                 print(Map.grid[x0][y0+8].show_card())
             else :
                 print("Error Up Down Middle ")
+                self.replay_card()
         else :
             print("Error")
+            self.replay_card()
+
     def show_actions(self,Game) :
         for i in range(len(Game.players)):
             print(f"Action cards played on {Game.players[i].name}")
@@ -585,6 +591,12 @@ class Tour():
     def play_path(self,IdxCard,x_pos,y_pos,MAP):
         m = MAP.m #5
         n=MAP.n #9
+
+        if x_pos>MAP.m or y_pos>MAP.n:
+            print('no path reaches the position',f'({x_pos},{y_pos})')
+            self.replay_card()
+
+
         cord=[[x_pos-1,y_pos,'U','D'],[x_pos,y_pos-1,'L','R'],[x_pos+1,y_pos,'D','U'],[x_pos,y_pos+1,'R','L']]
       #  cord = [[x_pos - 1, y_pos, 'U'], [x_pos, y_pos - 1, 'L'], [x_pos + 1, y_pos, 'D'], [x_pos, y_pos + 1, 'R']]
         cx=[]
@@ -634,7 +646,7 @@ class Tour():
         print(x_pos,y_pos) 
         print(MAP.n,MAP.m)
 
-        if x_pos==MAP.m or x_pos==-1 or y_pos==MAP.n or y_pos==-1:
+        if x_pos>=MAP.m or x_pos==-1 or y_pos>=MAP.n or y_pos==-1:
             print('we gonna void it on')
             vide=VoidCard()
             MAP.update_map(vide,x_pos,y_pos)
@@ -698,8 +710,10 @@ class Tour():
                     print("card played hahaha")
                 else : 
                     print("card cannot be played")
+                    self.replay_card()
             else : 
                 print("wlh ghir nqol")
+                self.replay_card()
                  
                     
 
@@ -713,17 +727,25 @@ class Tour():
 
         else:
             print("There is a card already played there")
+            print("Please replay :")
+            self.current_player.hand.DisplayHand()
+            idx=int(input('Select a Card'))
+            self.play_card(idx)
 
 
     def play_card(self,idx,x_pos=None,y_pos=None,map=None,target_player=None,idxCardtoRem=None):
 
         if isinstance(self.current_player.hand.handCards[idx],PathCard):
-            x_corda=int(input("please enter X "))
-            y_corda=int(input("please enter y "))
-            rev=input("Do you want to reverse [Y/N]")
-            if rev =='Y':
-                self.current_player.hand.handCards[idx].reverse()
-            self.play_path(idx,x_corda,y_corda,map1)
+            if len(self.current_player.actions)==0:
+                x_corda=int(input("please enter X "))
+                y_corda=int(input("please enter y "))
+                rev=input("Do you want to reverse [Y/N]")
+                if rev =='Y':
+                    self.current_player.hand.handCards[idx].reverse()
+                self.play_path(idx,x_corda,y_corda,map1)
+            else:
+                print(f"{self.current_player.name} please fix your material first")
+                self.replay_card()
         elif isinstance(self.current_player.hand.handCards[idx],ActionCard):
             if self.current_player.hand.handCards[idx].name in ["MAP","RoF"] :
                 self.action_on_map (idx,map1,2,1)
@@ -732,7 +754,15 @@ class Tour():
                     print(f'-{i}- {Game.players[i].name}')
                 target=int(input('Enter a number :'))
                 self.action_on_player(Game.players[target],idx)
-""""
+
+    def replay_card(self):
+        print(f"Please  {self.current_player.name} replay :")
+        self.current_player.hand.DisplayHand()
+        idx=int(input('Select a Card: '))
+        self.play_card(idx)
+
+
+        """"
         if type(self.current_player.hand.handCards[IdxCard])==type(ActionCard):
 
             self.play_action(IdxCard=IdxCard,map=map,target_player=target_player,idxCardtoRem=idxCardtoRem)
@@ -742,7 +772,7 @@ class Tour():
             self.play_path(IdxCard=IdxCard,map=map,target_player=target_player,idxCardtoRem=idxCardtoRem)
         else:
             print("Error type of card invalid")
-"""
+""" 
 
         
 
