@@ -345,7 +345,9 @@ class game(): #Partie
         avcards = dec["Action"] + dec["Path"] 
         random.shuffle(avcards)
         self.AvailableCards = avcards
-            
+        
+                
+                
         
             
      
@@ -353,10 +355,54 @@ class game(): #Partie
     def Display_score (self):
        for player in self.players :
            print (f"The score of the player named {player.name} is {player.score}")
-  #  def startGame
-       
+           
+    def Play (self,manche):
+       while  manche1.Inprogess == False:
+           # for now the game ends when we reach the G goal card
+           tour=Tour(self.players[0])
+           manche.play_tour(tour,map1)
+           Sab = manche.DoSabWon (self)
+       winner = tour.current_player
+       manche.Scoreupdate(Sab,winner)
   
-    
+    def Scoreupdate(self,Sab = False ,winner = None) :
+        plyrs = self.players
+        idxS = []
+      
+        if (Sab) : 
+            for i in range(len(self.players)) : 
+                if (self.players[i].role == 'SAB') :
+                    idxS.append(i) 
+            SabC = len(idxS)
+            for i in idxS : 
+                if (SabC == 1 ) : 
+                    # We have to POP from the gold cards 4 worth of gold
+                    self.players[i].score += 4
+                elif(SabC == 4) : 
+                    self.players[i].score += 2
+                elif(SabC == 3) : 
+                    self.players[i].score += 3
+                else : 
+                    print("GOLD ERROR")
+        else :
+            
+            GoldC = random.choices(create_dec()["Gold"],k=len(self.players))
+            print(f"player {self.players[winner].name} please chose a gold card ")
+            for i in range(len(GoldC)) : 
+                print(f"{i} : {GoldC [i].name} == {GoldC [i].gain}\n")
+            choice = input()
+            plyrs[winner].score += GoldC[i].gain
+            GoldC.pop(choice)
+            plyrs.pop(winner)
+            for pl in plyrs : 
+                print(f"player {pl.name} please chose a gold card ")
+                for i in range(len(GoldC)) : 
+                    print(f"{i} : {GoldC [i].name} == {GoldC [i].gain}\n")
+                choice = input()
+                pl.score += GoldC[i].gain
+                GoldC.pop(choice)
+                
+            
   
     
 class hand () :
@@ -418,7 +464,30 @@ class manche () :
         for i in range(len(Game.players)) : 
             rand_role = selectioncards.pop(random.randrange(len(selectioncards)))
             Game.players[i].role = rand_role.name
+   
             
+    def DoSabWon (self,Game):
+        pathC = False
+        if (len(Game.AvailableCards)==0):
+            for i in range(len(Game.players)) : 
+                for j in range(len(Game.players[i].hand.handCards)):  
+                    if (isinstance(Game.players[i].hand.handCards[j],PathCard)) :
+                        pathC = True
+                        break 
+                    else : continue 
+                if (pathC == True) : break 
+                else : continue 
+            if (pathC == False) : 
+                self.Inprogess = True
+                print("Les saboteurs ont gagné")
+                return True
+            else : 
+                self.Inprogess = False
+                print("Partie continue")
+                return False
+        
+        
+       
     def showRoles (self,Game):
         for i in range (len(Game.players)):
             input(f"player {Game.players[i].name} press a Key ") 
@@ -440,7 +509,7 @@ class manche () :
             Game.players[i].hand = hand(random_cards(avcards,nm_cr),nm_cr)
         self.stockpile = avcards
 
-
+        
     def play_tour(self,tour,map):
         for pl in Game.players:
             tour.nextplayer(pl) 
@@ -458,7 +527,7 @@ class manche () :
     
             map.display_map()
             tour.show_actions(Game)
-
+            
             if self.Inprogess:
                 print('Partie terminé')
                 break 
@@ -480,6 +549,7 @@ class Tour():
         self.current_player = next_player
 
     def action_on_player(self,target_player,IdxCard,idxCardtoRem = None):
+        maching_cards = 0  
         if (self.current_player.hand.handCards[IdxCard].function == "Nx") : 
             if ( ( self.current_player.hand.handCards[IdxCard].name in target_player.actions) or (len(target_player.actions))==3 ) :
                 print("Cannot play this card")
@@ -495,12 +565,22 @@ class Tour():
                 self.replay_card()
             else :
                 for idxCardtoRem in range(len(target_player.actions)):
-                    #print(target_player.actions[idxCardtoRem])
-                    #print(self.current_player.hand.handCards[IdxCard].name)
+                    print(target_player.actions[idxCardtoRem])
+                    print(self.current_player.hand.handCards[IdxCard].name)
                     if (target_player.actions[idxCardtoRem][1] in self.current_player.hand.handCards[IdxCard].name):
-                        target_player.actions.pop(idxCardtoRem)
-                        print('we took it off') # case where the player have to chose
-                        break
+                        #target_player.actions.pop(idxCardtoRem)
+                        maching_cards += 1 
+                        idxx =  idxCardtoRem;
+                        #print('we took it off') # case where the player have to chose
+                        #break
+                if (maching_cards == 1) :
+                    target_player.actions.pop(idxx)
+                else : 
+                    print("Which action would you want to remove : ")
+                    for idxCardtoRem in range(len(target_player.actions)) : 
+                        print(f"{idxCardtoRem} : {target_player.actions[idxCardtoRem]}\n")
+                    idxx = int(input())  
+                    target_player.actions.pop(idxx)
         else:
             print("The action card cannot be played for the target_player")
 
@@ -681,7 +761,7 @@ class Tour():
                     pass
                 elif  isinstance (MAP.grid[crd[0]][crd[1]],GoalCard) :   #Goal card
                     
-                    if ( cond_on_ncrd == True ) and ( MAP.grid[crd[0]][crd[1]].revealed==False ):
+                    if ( cond_on_ncrd == True ) and ( MAP.grid[crd[0]][crd[1]].revealed==False and self.current_player.hand.handCards[IdxCard].function == 'N+'):
                        
                         reveal_goal=True  # the goal card will be revealed in condition that it satisfies the path to the Start
                         x_rev=crd[0]    # cooredinated of the card to be reveald if the condition is statisfied
@@ -705,7 +785,7 @@ class Tour():
                         break
                     print("GOAL true")
 
-                elif ((cond_on_ncrd) and (cond_on_crd )) :
+                elif ((cond_on_ncrd) and (cond_on_crd)) :
                     
                     go=True
                     print("concored true")
@@ -982,8 +1062,8 @@ manche1.showRoles(Game)
 #tour1.action_on_map (idx,map1,2,1)
 #map1.display_map()
 
-
-
+Game.Play (manche1)
+"""
 while  manche1.Inprogess == False:
 
     # for now the game ends when we reach the G goal card
@@ -991,7 +1071,7 @@ while  manche1.Inprogess == False:
     tour1=Tour(Game.players[0])
     manche1.play_tour(tour1,map1)
 
-
+"""
 '''
 for pl in Game.players:
     tour1.nextplayer(pl) 
