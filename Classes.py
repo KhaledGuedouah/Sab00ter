@@ -668,7 +668,9 @@ class Tour():
        
         if(MAP.grid[x_pos][y_pos].name=="void"):
             print("Void place, A card can be played here")
+            reveal_goal=False
             for crd in cord:
+                
                 print(crd)
                 cond_on_crd = crd[3] in MAP.grid[crd[0]][crd[1]].name 
                 cond_on_ncrd = crd[2] in self.current_player.hand.handCards[IdxCard].name
@@ -680,12 +682,17 @@ class Tour():
                 elif  isinstance (MAP.grid[crd[0]][crd[1]],GoalCard) :   #Goal card
                     
                     if ( cond_on_ncrd == True ) and ( MAP.grid[crd[0]][crd[1]].revealed==False ):
-                        print('we show the card')
-                        MAP.grid[crd[0]][crd[1]].revealed=True
+                       
+                        reveal_goal=True  # the goal card will be revealed in condition that it satisfies the path to the Start
+                        x_rev=crd[0]    # cooredinated of the card to be reveald if the condition is statisfied
+                        y_rev=crd[1]
+
                         if cond_on_crd==False:
                             print('Revere GOAL ')
                             MAP.grid[crd[0]][crd[1]].reverse()
-                            go=True
+                        
+                        go=True
+
                         if 'G' in MAP.grid[crd[0]][crd[1]].value:
                            manche1.Inprogess = True
                             
@@ -712,6 +719,11 @@ class Tour():
                     break
             if go:
                 if ( self.check_path(self.current_player.hand.handCards[IdxCard],x_pos,y_pos,MAP)) :
+
+                    if reveal_goal:
+                        print('we show the card')
+                        MAP.grid[x_rev][y_rev].revealed=True
+
                     MAP.update_map(self.current_player.hand.handCards[IdxCard],x_pos,y_pos)
                     print("card played hahaha")
                 else : 
@@ -970,10 +982,12 @@ manche1.showRoles(Game)
 #tour1.action_on_map (idx,map1,2,1)
 #map1.display_map()
 
-manche_done=False
 
 
 while  manche1.Inprogess == False:
+
+    # for now the game ends when we reach the G goal card
+
     tour1=Tour(Game.players[0])
     manche1.play_tour(tour1,map1)
 
