@@ -349,7 +349,15 @@ class game(): #Partie
         
                 
      
-    
+    def regenerate(self):
+        avcards = self.dec["Action"] + self.dec["Path"] 
+        random.shuffle(avcards)
+        self.AvailableCards = avcards
+        for crd in self.dec["Goal"]:
+            crd.revealed=False
+
+
+
     def Display_score (self):
        for player in self.players :
            print (f"The score of the player named {player.name} is {player.score}")
@@ -1086,16 +1094,17 @@ class map():
 plyr1 = player("Khaled")
 plyr2 = player("Feriel")
 plyr3 = player("Assil")
+
 Game = game([plyr1,plyr2,plyr3])
 #decc= create_dec()
-map1 = map(Game.dec)
+        #map1 = map(Game.dec)
 
-manche1 = manche()
+        #manche1 = manche()
 
-map1.display_map()
-manche1.DistributeRoles(Game)
-manche1.DistributeCards(Game)
-manche1.showRoles(Game)
+        #map1.display_map()
+        #manche1.DistributeRoles(Game)
+        #manche1.DistributeCards(Game)
+        #manche1.showRoles(Game)
 
 #tour1=Tour(plyr3) 
 #hand1=tour1.current_player.hand
@@ -1104,7 +1113,23 @@ manche1.showRoles(Game)
 #tour1.action_on_map (idx,map1,2,1)
 #map1.display_map()
 
-Game.Play (manche1)
+#Game.Play (manche1)
+
+for i in range(3):
+    map1 = map(Game.dec)
+    manche1 = manche()
+
+    map1.display_map()
+    manche1.DistributeRoles(Game)
+    manche1.DistributeCards(Game)
+    manche1.showRoles(Game)
+
+    Game.Play (manche1)
+    Game.regenerate()
+    
+
+
+
 """
 while  manche1.Inprogess == False:
 
