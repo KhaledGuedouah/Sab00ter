@@ -345,6 +345,7 @@ class game(): #Partie
         avcards = dec["Action"] + dec["Path"] 
         random.shuffle(avcards)
         self.AvailableCards = avcards
+        self.GoldsCards=dec["Gold"]
         
                 
      
@@ -366,6 +367,7 @@ class game(): #Partie
     def Scoreupdate(self,Sab = False ,winner = None) :
         plyrs = list(self.players)
         idxS = []
+        print(len(self.GoldsCards))
       
         if (Sab) : 
             for i in range(len(self.players)) : 
@@ -384,13 +386,18 @@ class game(): #Partie
                     print("GOLD ERROR")
         else :
             
-            GoldC = random.choices(create_dec()["Gold"],k=len(self.players))
-            print(f"player {self.players[winner].name} please chose a gold card ")
-            for i in range(len(GoldC)) : 
-                print(f"{i} : {GoldC [i].name} == {GoldC [i].gain}\n")
-            choice = int(input())
-            plyrs[winner].score += GoldC[choice].gain
-            GoldC.pop(choice)
+            GoldC = random.choices(self.GoldsCards,k=len(self.players))
+            if self.players[winner].role == 'SAB':
+                print(f"player {self.players[winner].name} you were not supposed to do this ... ")
+            else:
+                print(f"player {self.players[winner].name} please chose a gold card ")
+                for i in range(len(GoldC)) : 
+                    print(f"{i} : {GoldC [i].name} == {GoldC [i].gain}\n")
+                choice = int(input())
+                plyrs[winner].score += GoldC[choice].gain
+                self.GoldsCards.remove(GoldC[choice])
+                GoldC.pop(choice)
+                
             plyrs.pop(winner)
             for pl in plyrs : 
 
@@ -403,7 +410,9 @@ class game(): #Partie
                     
                 choice =int(input())
                 pl.score += GoldC[choice].gain
+                self.GoldsCards.remove(GoldC[choice])
                 GoldC.pop(choice)
+        print(len(self.GoldsCards))
                 
             
   
