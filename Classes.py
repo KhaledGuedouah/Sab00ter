@@ -347,9 +347,6 @@ class game(): #Partie
         self.AvailableCards = avcards
         
                 
-                
-        
-            
      
     
     def Display_score (self):
@@ -362,11 +359,12 @@ class game(): #Partie
            tour=Tour(self.players[0])
            manche.play_tour(tour,map1)
            Sab = manche.DoSabWon (self)
-       winner = tour.current_player
-       manche.Scoreupdate(Sab,winner)
+       winner = self.players.index(tour.current_player)
+       self.Scoreupdate(Sab,winner)
+       self.Display_score()
   
     def Scoreupdate(self,Sab = False ,winner = None) :
-        plyrs = self.players
+        plyrs = list(self.players)
         idxS = []
       
         if (Sab) : 
@@ -390,16 +388,21 @@ class game(): #Partie
             print(f"player {self.players[winner].name} please chose a gold card ")
             for i in range(len(GoldC)) : 
                 print(f"{i} : {GoldC [i].name} == {GoldC [i].gain}\n")
-            choice = input()
-            plyrs[winner].score += GoldC[i].gain
+            choice = int(input())
+            plyrs[winner].score += GoldC[choice].gain
             GoldC.pop(choice)
             plyrs.pop(winner)
             for pl in plyrs : 
+
+                if pl.role == 'SAB' :
+                    continue
+
                 print(f"player {pl.name} please chose a gold card ")
                 for i in range(len(GoldC)) : 
                     print(f"{i} : {GoldC [i].name} == {GoldC [i].gain}\n")
-                choice = input()
-                pl.score += GoldC[i].gain
+                    
+                choice =int(input())
+                pl.score += GoldC[choice].gain
                 GoldC.pop(choice)
                 
             
@@ -523,7 +526,8 @@ class manche () :
             else :
                 tour.play_card(idx)
             hand1.Throwcard(hand1.handCards[idx])
-            hand1.AddCard(manche1.stockpile.pop())
+            if len(manche1.stockpile)>0 :
+                hand1.AddCard(manche1.stockpile.pop())
     
             map.display_map()
             tour.show_actions(Game)
