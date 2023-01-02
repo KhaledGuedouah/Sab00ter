@@ -341,11 +341,11 @@ class game(): #Partie
 
     def __init__(self,players):
         self.players = players
-        dec = create_dec()
-        avcards = dec["Action"] + dec["Path"] 
+        self.dec = create_dec()
+        avcards = self.dec["Action"] + self.dec["Path"] 
         random.shuffle(avcards)
         self.AvailableCards = avcards
-        self.GoldsCards=dec["Gold"]
+        self.GoldsCards=self.dec["Gold"]
         
                 
      
@@ -422,14 +422,17 @@ class hand () :
         self.handCards = handCards
         self.number_cards = number_cards 
     def Throwcard (self,CardtoThrow):
+        print('a card is gonna be THROWN')
         for i in range(len(self.handCards)) : 
             if  self.handCards[i] == CardtoThrow : 
                 self.handCards.pop(i)
                 break
             else : print("don't throw this")
+        print("we out of here ")
     def AddCard (self,CardtoAdd):
         if len(self.handCards) < self.number_cards :
             self.handCards.append(CardtoAdd)
+            print(CardtoAdd,'hya li normalement tenzad')
         else : print("You have Max Number of cards Already")
         
     def DisplayHand (self):
@@ -454,21 +457,21 @@ class manche () :
     def DistributeRoles(self,Game):
         num_ply = len(Game.players)
         if (num_ply==3) : 
-            selectioncards = random.choices(create_dec()["Role"]["S"],k=1) + random.choices(create_dec()["Role"]["C"],k=3)
+            selectioncards = random.choices(Game.dec["Role"]["S"],k=1) + random.choices(Game.dec["Role"]["C"],k=3)
         elif((num_ply==4)):
-            selectioncards = random.choices(create_dec()["Role"]["S"],k=1) + random.choices(create_dec()["Role"]["C"],k=4)
+            selectioncards = random.choices(Game.dec["Role"]["S"],k=1) + random.choices(Game.dec["Role"]["C"],k=4)
         elif((num_ply==5)):
-            selectioncards = random.choices(create_dec()["Role"]["S"],k=2) + random.choices(create_dec()["Role"]["C"],k=4)
+            selectioncards = random.choices(Game.dec["Role"]["S"],k=2) + random.choices(Game.dec["Role"]["C"],k=4)
         elif((num_ply==6)):
-            selectioncards = random.choices(create_dec()["Role"]["S"],k=2) + random.choices(create_dec()["Role"]["C"],k=5)
+            selectioncards = random.choices(Game.dec["Role"]["S"],k=2) + random.choices(Game.dec["Role"]["C"],k=5)
         elif((num_ply==7)):
-            selectioncards = random.choices(create_dec()["Role"]["S"],k=3) + random.choices(create_dec()["Role"]["C"],k=5)
+            selectioncards = random.choices(Game.dec["Role"]["S"],k=3) + random.choices(Game.dec["Role"]["C"],k=5)
         elif((num_ply==8)):
-            selectioncards = random.choices(create_dec()["Role"]["S"],k=3) + random.choices(create_dec()["Role"]["C"],k=6)
+            selectioncards = random.choices(Game.dec["Role"]["S"],k=3) + random.choices(Game.dec["Role"]["C"],k=6)
         elif((num_ply==9)):
-            selectioncards = random.choices(create_dec()["Role"]["S"],k=3) + random.choices(create_dec()["Role"]["C"],k=7)
+            selectioncards = random.choices(Game.dec["Role"]["S"],k=3) + random.choices(Game.dec["Role"]["C"],k=7)
         elif((num_ply==10)):
-            selectioncards = random.choices(create_dec()["Role"]["S"],k=4) + random.choices(create_dec()["Role"]["C"],k=7)
+            selectioncards = random.choices(Game.dec["Role"]["S"],k=4) + random.choices(Game.dec["Role"]["C"],k=7)
         else :
             print("Number of players is not valid")
             
@@ -527,17 +530,29 @@ class manche () :
             tour.nextplayer(pl) 
             hand1=tour.current_player.hand
             hand1.DisplayHand()
+            
             print(f"{tour.current_player.name}'s turn to play ")
             idx = int(input("please enter a card or '-1' if you want to throw a card:  "))
+
             if idx == -1:
                  idx = int(input("please select a card to throw: "))
-                 print(hand1.handCards[idx],'thrown' )   
+                 print(hand1.handCards[idx],'thrown' )
+                 hand1.Throwcard(hand1.handCards[idx])
+                 tour.to_throw=False
+                    
+
             else :
                 tour.play_card(idx)
-            hand1.Throwcard(hand1.handCards[idx])
+
+            if tour.to_throw==True:
+                #print("me naaa")
+                hand1.Throwcard(hand1.handCards[idx])
+
+            #print('Vive nahd ')
             if len(manche1.stockpile)>0 :
                 hand1.AddCard(manche1.stockpile.pop())
-    
+                hand1.DisplayHand()
+                #print("YOOOON",len(hand1.handCards))
             map.display_map()
             tour.show_actions(Game)
             
@@ -558,6 +573,7 @@ def random_cards(avcards,num_cr) :
 class Tour():
     def __init__(self,current_player):
         self.current_player = current_player
+        self.to_throw=True
     def nextplayer (self,next_player):
         self.current_player = next_player
 
@@ -845,9 +861,14 @@ class Tour():
 
 
     def play_card(self,idx,x_pos=None,y_pos=None,map=None,target_player=None,idxCardtoRem=None):
+        self.to_throw=True
         if idx == -1:
             idx = int(input("please select a card to throw: "))
             print(self.current_player.hand.handCards[idx],'thrown' )   
+            self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
+            self.to_throw=False
+            #return to_throw
+            print(self.to_throw)
         elif isinstance(self.current_player.hand.handCards[idx],PathCard):
             if len(self.current_player.actions)==0:
                 x_corda=int(input("please enter X "))
@@ -856,17 +877,23 @@ class Tour():
                 if rev =='Y':
                     self.current_player.hand.handCards[idx].reverse()
                 self.play_path(idx,x_corda,y_corda,map1)
+                #self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
             else:
                 print(f"{self.current_player.name} please fix your material first")
                 self.replay_card()
         elif isinstance(self.current_player.hand.handCards[idx],ActionCard):
             if self.current_player.hand.handCards[idx].name in ["MAP","RoF"] :
                 self.action_on_map (idx,map1,2,1)
+                #self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
             else:
                 for i in range(len(Game.players)):
                     print(f'-{i}- {Game.players[i].name}')
                 target=int(input('Enter a number :'))
                 self.action_on_player(Game.players[target],idx)
+                #self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
+        print('to throw raho',self.to_throw)
+        
+        
 
     def replay_card(self):
         print(f"Please  {self.current_player.name} replay :")
@@ -1055,15 +1082,17 @@ class map():
 
 
   
-decc= create_dec()
-map1 = map(decc)
-map1.display_map()
+
 plyr1 = player("Khaled")
 plyr2 = player("Feriel")
 plyr3 = player("Assil")
 Game = game([plyr1,plyr2,plyr3])
+#decc= create_dec()
+map1 = map(Game.dec)
+
 manche1 = manche()
 
+map1.display_map()
 manche1.DistributeRoles(Game)
 manche1.DistributeCards(Game)
 manche1.showRoles(Game)
