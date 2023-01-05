@@ -629,6 +629,7 @@ class manche () :
                                                  tour.play_card(c,Boot = True ,x_pos=i,y_pos=j,map=None,target_player=None)
                                             except : 
                                                 error = True
+                                                tour.boot = False
                                                 break
                                              #if not (tour.boot) : 
                                              #    pl.hand.handCards[c].reversed = True
@@ -699,8 +700,8 @@ class manche () :
                                 if not thrown and len(pl.hand.handCards) > 0 : 
                                     hand1.Throwcard(hand1.handCards[hand1.handCards.index(random.choice(hand1.handCards))])
                         else : 
-                               
-                                hand1.Throwcard(hand1.handCards[idxtothrow])
+                               if (len(pl.hand.handCards) > 0) : 
+                                   hand1.Throwcard(hand1.handCards[idxtothrow])
                                     
                 else : 
                         
@@ -708,7 +709,6 @@ class manche () :
                         
                         for c in range(len(pl.hand.handCards)) : 
                             # First thing to do :  check if action card are played against the BOOT
-                            
                             if(len(pl.actions) != 0 ) : 
                                 
                                 for a in pl.actions :
@@ -788,8 +788,8 @@ class manche () :
                                 if not thrown and len(pl.hand.handCards) > 0 : 
                                     hand1.Throwcard(hand1.handCards[hand1.handCards.index(random.choice(hand1.handCards))])
                         else : 
-                                
-                                hand1.Throwcard(hand1.handCards[idxtothrow])
+                                if (len(pl.hand.handCards) > 0) : 
+                                    hand1.Throwcard(hand1.handCards[idxtothrow])
                                     
                                     
                             
@@ -1415,7 +1415,7 @@ for i in range(3):
     manche1.DistributeRoles(Game)
     plyr1.role = "CHR"
     plyr2.role = "CHR"
-    plyr3.role = "CHR"
+    plyr3.role = "SAB"
     manche1.DistributeCards(Game)
     manche1.showRoles(Game)
 
