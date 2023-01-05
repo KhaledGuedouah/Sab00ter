@@ -1,14 +1,23 @@
-print("Here's where we can code the Classes")
-
+from abc import ABC , abstractmethod
 import random
 #import MP
 # Definition of the Mother class CARD
-class Card():
-
-    def __init__(self,name,function="Nu"):
-        self.name=name
-        self.function=function
+class Card(ABC):
+    def __init__(self):
+        pass
+    @abstractmethod
+    def display_card(self):
+        pass
     
+    def __str__(self):
+        return f"{self.name} ({self.function}) card "
+
+# Definition of the inheriting classes of Card
+class RoleCard(Card):
+    def __init__(self,name,function="Nu"):
+        super().__init__()
+        self.name = name 
+        self.function = function
     def display_card(self):
 
         fst=" "*len(self.name)
@@ -18,11 +27,13 @@ class Card():
         return shwd
 
     def __str__(self):
-        return f"{self.name} ({self.function}) card "
-
-# Definition of the inheriting classes of Card
+        return super().__str__()
 
 class PathCard(Card):
+    def __init__ (self,name,function):
+        super().__init__()
+        self.name = name 
+        self.function = function
     def display_card(self):
         fst="   "
         snd=f" {self.function[1]} "
@@ -45,8 +56,13 @@ class PathCard(Card):
         self.name=self.name.replace('R','l')
         self.name=self.name.replace('L','r')
         self.name=self.name.upper()
-
+    def __str__(self):
+        return super().__str__()
 class ActionCard(Card):
+    def __init__(self,name,function="Nu"):
+        super().__init__()
+        self.name = name 
+        self.function = function
     def display_card(self):
 
         if self.function == "Nx":
@@ -63,12 +79,15 @@ class ActionCard(Card):
             thd=f" {self.name[2]} "
         shwd= f"({fst})\n({snd})\n({thd})"
         return shwd
-
+    def __str__(self):
+        return super().__str__()
 
 class GoldCard(Card):
 
     def __init__(self, name, function="Nu",gain=0):
-        Card.__init__(self,name,function)
+        super().__init__()
+        self.name = name 
+        self.function = function
         self.gain=gain
 
     def display_card(self):
@@ -77,20 +96,24 @@ class GoldCard(Card):
         thd=f"   "
         shwd= f"({fst})\n({snd})\n({thd})"
         return shwd
-
+    def __str__(self):
+        return super().__str__()
 class VoidCard(Card):
     def __init__(self):
-        Card.__init__(self,name="void",function="void")
+        super().__init__()
+        self.name = "void"
+        self.function = "void"
     def display_card(self):
         fst= "   "
         snd= "   "
         thd= "   "
         shwd= f" {fst} \n {snd} \n {thd} "
         return shwd
-    
+    def __str__(self):
+        return super().__str__()
 class GoalCard(PathCard):
     def __init__(self, name, function="Nu",value='N', revealed=False):
-        PathCard.__init__(self,name,function)
+        super().__init__(name,function)
         self.value=value
         self.revealed = revealed
 
@@ -110,7 +133,9 @@ class GoalCard(PathCard):
     
         shwd= f"({fst})\n({snd})\n({thd})"
         return shwd
-        
+    def __str__(self):
+        return super().__str__()
+    
     def display_card(self):
         if (self.revealed==False):
             fst=f"   "
@@ -121,7 +146,8 @@ class GoalCard(PathCard):
         else :
             return self.show_card()
     
-
+    def __str__(self):
+        return super().__str__()
 # Fucntion to create all cards of the game 
 
 def create_dec():
@@ -135,12 +161,12 @@ def create_dec():
     card_list["Start"]=S
 # 4 cards Saboteurs
     for _ in range(4):
-        S=Card("SAB")
+        S=RoleCard("SAB")
         card_list["Role"]["S"].append(S)
 
 # 7 cards Chercheurs
     for _ in range(7):
-        S=Card("CHR")
+        S=RoleCard("CHR")
         card_list["Role"]["C"].append(S)
 
 # 6 cards End reveal
