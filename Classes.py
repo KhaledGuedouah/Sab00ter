@@ -363,7 +363,7 @@ class game(): #Partie
            print (f"The score of the player named {player.name} is {player.score}")
            
     def Play (self,manche):
-       while  manche1.Inprogess == False:
+       while  manche.Inprogess == False:
            # for now the game ends when we reach the G goal card
            tour=Tour(self.players[0])
            manche.play_tour(tour,map1)
@@ -395,31 +395,51 @@ class game(): #Partie
         else :
             
             GoldC = random.choices(self.GoldsCards,k=len(self.players))
-            if self.players[winner].role == 'SAB':
-                print(f"player {self.players[winner].name} you were not supposed to do this ... ")
-            else:
-                print(f"player {self.players[winner].name} please chose a gold card ")
+            if not ( "B00T" in self.players[winner].name ) : 
+                if self.players[winner].role == 'SAB':
+                    print(f"player {self.players[winner].name} you were not supposed to do this ... ")
+                else:
+                    print(f"player {self.players[winner].name} please chose a gold card ")
+                    for i in range(len(GoldC)) : 
+                        print(f"{i} : {GoldC [i].name} == {GoldC [i].gain}\n")
+                    choice = int(input())
+                    plyrs[winner].score += GoldC[choice].gain
+                    self.GoldsCards.remove(GoldC[choice])
+                    GoldC.pop(choice)
+            else : 
+                gains = []
                 for i in range(len(GoldC)) : 
-                    print(f"{i} : {GoldC [i].name} == {GoldC [i].gain}\n")
-                choice = int(input())
-                plyrs[winner].score += GoldC[choice].gain
-                self.GoldsCards.remove(GoldC[choice])
-                GoldC.pop(choice)
+                    gains.append(GoldC[i].gain)
+                    
+                plyrs[winner].score += max(gains)
+                ids = gains.index(max(gains))
+                self.GoldsCards.remove(GoldC[ids])
+                GoldC.pop(ids)
                 
             plyrs.pop(winner)
             for pl in plyrs : 
 
                 if pl.role == 'SAB' :
                     continue
-
-                print(f"player {pl.name} please chose a gold card ")
-                for i in range(len(GoldC)) : 
-                    print(f"{i} : {GoldC [i].name} == {GoldC [i].gain}\n")
-                    
-                choice =int(input())
-                pl.score += GoldC[choice].gain
-                self.GoldsCards.remove(GoldC[choice])
-                GoldC.pop(choice)
+                if not ("B00T" in pl.name) :
+                    print(f"player {pl.name} please chose a gold card ")
+                    for i in range(len(GoldC)) : 
+                        print(f"{i} : {GoldC [i].name} == {GoldC [i].gain}\n")
+                        
+                    choice =int(input())
+                    pl.score += GoldC[choice].gain
+                    self.GoldsCards.remove(GoldC[choice])
+                    GoldC.pop(choice)
+                else : 
+                    gains = []
+                    for i in range(len(GoldC)) : 
+                        gains.append(GoldC[i].gain)
+                        print(self.GoldsCards[i].gain)
+                    pl.score += max(gains)
+                    print(gains,len(gains))
+                    print(len(self.GoldsCards))
+                    print(GoldC[gains.index(max(gains))].gain)
+                    self.GoldsCards.remove(GoldC[gains.index(max(gains))])
         print(len(self.GoldsCards))
                 
             
@@ -534,27 +554,205 @@ class manche () :
 
         
     def play_tour(self,tour,map):
+        tour.boot = False
+        #listpl = list(Game.players)
         for pl in Game.players:
             tour.nextplayer(pl) 
             hand1=tour.current_player.hand
             hand1.DisplayHand()
-            
-            print(f"{tour.current_player.name}'s turn to play ")
-            idx = int(input("please enter a card or '-1' if you want to throw a card:  "))
-
-            if idx == -1:
-                 idx = int(input("please select a card to throw: "))
-                 print(hand1.handCards[idx],'thrown' )
-                 hand1.Throwcard(hand1.handCards[idx])
-                 tour.to_throw=False
+            if not ("B00T" in pl.name ) : 
+                
+                print(f"{tour.current_player.name}'s turn to play ")
+                idx = int(input("please enter a card or '-1' if you want to throw a card:  "))
+    
+                if idx == -1:
+                     idx = int(input("please select a card to throw: "))
+                     print(hand1.handCards[idx],'thrown' )
+                     hand1.Throwcard(hand1.handCards[idx])
+                     tour.to_throw=False
+                        
+    
+                else :
+                    tour.play_card(idx)
+    
+                if tour.to_throw==True:
+                    hand1.Throwcard(hand1.handCards[idx])
+            else : 
+                if (pl.role == "SAB") : 
+                        print("SABOOTER RKHIS")
+                        idxtothrow = 0 
+                        for c in range(len(pl.hand.handCards)) : 
+                            print(pl.hand.handCards[c])
+                            if(isinstance(pl.hand.handCards[c],ActionCard) and pl.hand.handCards[c].function == "Nx" ) :
+                                listpl = list(Game.players)
+                                listpl.remove(pl) 
+                                choice = random.choice(listpl)
+                                idxvic = (Game.players).index(choice)
+                                tour.play_card(c,Boot = True ,x_pos=None,y_pos=None,map=None,target_player=idxvic)
+                                print("assegas amgaz",tour.boot)
+                                if (tour.boot) :
+                                    idxtothrow = c
+                                    break 
+                                
+                            elif( isinstance( pl.hand.handCards[c], PathCard) and pl.hand.handCards[c].function == "Nx"  and len(pl.actions) == 0 ) :
+                                 for i in range(map.m) : 
+                                     for j in range(map.n) : 
+                                         if not (tour.boot) : 
+                                             tour.play_card(c,Boot = True ,x_pos=i,y_pos=j,map=None,target_player=None)
+                                             if not (tour.boot) : 
+                                                 pl.hand.handCards[c].reversed = True
+                                                 tour.play_card(c,Boot = True ,x_pos=i,y_pos=j,map=None,target_player=None)
+                                         else : 
+                                             idxtothrow = c
+                                             break
+                                     if (tour.boot) : break
+                                 if (tour.boot) : break
+                                 if (j == (map.n-1) and i == (map.m-1) and not (tour.boot)) :
+                                     continue 
+                                 #tour.boot = True 
+                            elif(len(pl.actions) != 0 ) : 
+                                for a in pl.actions :
+                                    if a in pl.hand.handCards[c].name and pl.hand.handCards[c].function == "N+" : 
+                                        tour.play_card(c,Boot = True ,x_pos=None,y_pos=None,map=None,target_player=(Game.players).index(pl)) 
+                                        tour.boot = True 
+                                        idxtothrow = c
+                                        break
+                                if (tour.boot): break 
+                                
+                            elif (isinstance( pl.hand.handCards[c], ActionCard) and pl.hand.handCards[c].name == "RoF" ) : 
+                                x0,y0=map.start_coord[0],map.start_coord[1]
+                                if(map.grid[x0+1][y0+1].name != "void") and (map.grid[x0+1][y0+1].function != "Nx"): 
+                                    map.grid[x0+1][y0+1] = VoidCard() 
+                                    tour.boot = True 
+                                    idxtothrow = c
+                                    break 
+                                elif(map.grid[x0+1][y0].name != "void") and (map.grid[x0+1][y0].function != "Nx") : 
+                                    map.grid[x0+1][y0] = VoidCard() 
+                                    tour.boot = True 
+                                    idxtothrow = c
+                                    break
+                                elif (map.grid[x0-1][y0].name != "void") and (map.grid[x0-1][y0].function != "Nx") : 
+                                    map.grid[x0-1][y0] = VoidCard() 
+                                    tour.boot = True 
+                                    idxtothrow = c
+                                    break 
+                                else :
+                                    print("cava pas")
+                                    tour.boot = False
+                                    continue 
+                            else : 
+                                continue
                     
+                
+                #    else : 
+                #        for card in range(len(pl.hand.handCards))  : 
+                            
+                        
+                #            if(isinstance(pl.hand.handCards[c],ActionCard) and pl.hand.handCards[c].function == "Nx" ) :
+                #                listpl.remove(pl) 
+                #                choice = random.choice(listpl)
+                #                idxvic = (Game.players).index(choice)
+                #                tour.play_card(c,Boot = True ,x_pos=None,y_pos=None,map=None,target_player=idxvic)
+                #                tour.boot = True 
+                #                break 
+                
+                                    
+                        if (not tour.boot ) :
+                                print("mal3ebch w rma")
+                                for card in range(len(pl.hand.handCards)) : 
+                                    if (pl.hand.handCards[card].function == 'N+') : 
+                                        hand1.Throwcard(hand1.handCards[card]) 
+                                        break
+                        else : 
+                                print("raw yermi l boot w l3eb ")
+                                hand1.Throwcard(hand1.handCards[idxtothrow])
+                                    
+                else : 
+                        print("Chercheur machi rkhis")
+                        idxtothrow = 0 
+                        
+                        for c in range(len(pl.hand.handCards)) : 
+                            # First thing to do :  check if action card are played against the BOOT
+                            
+                            if(len(pl.actions) != 0 ) : 
+                                
+                                for a in pl.actions :
+                                    if a in pl.hand.handCards[c].name and pl.hand.handCards[c].function == "N+" : 
+                                        tour.play_card(c,Boot = True ,x_pos=None,y_pos=None,map=None,target_player=(Game.players).index(pl)) 
+                                        tour.boot = True 
+                                        idxtothrow = c
+                                        break
+                                if (tour.boot): break 
+                            
+                            elif(isinstance(pl.hand.handCards[c],ActionCard) and pl.hand.handCards[c].function == "N+" ) :
+                                
+                                listpl = list(Game.players)
+                                listpl.remove(pl) 
+                                choice = random.choice(listpl)
+                                idxvic = (Game.players).index(choice)
+                                tour.play_card(c,Boot = True ,x_pos=None,y_pos=None,map=None,target_player=idxvic)
+                                print("assegas amgaz n2",tour.boot)
+                                if (tour.boot) :
+                                    idxtothrow = c
+                                    
+                                    break 
+                                
+                            elif( isinstance( pl.hand.handCards[c], PathCard) and pl.hand.handCards[c].function == "N+"  and len(pl.actions) == 0 ) :
+                                 print(3,self.Inprogess)
+                                 for i in range(map.m) : 
+                                     for j in range(map.n) : 
+                                         if not (tour.boot) : 
+                                            
+                                             tour.play_card(c,Boot = True ,x_pos=i,y_pos=j,map=None,target_player=None)
+                                             
+                                             if not (tour.boot) : 
+                                                 pl.hand.handCards[c].reversed = True
+                                                 tour.play_card(c,Boot = True ,x_pos=i,y_pos=j,map=None,target_player=None)
+                                         else : 
+                                             idxtothrow = c
+                                           
+                                             break
+                                     if (tour.boot) : 
+                                        
+                                         break
+                                 if (tour.boot) : 
+                                    
+                                     break
+                                 if (j == (map.n-1) and i == (map.m-1) and not (tour.boot)) :
+                                     continue 
+                                
+                            elif (isinstance( pl.hand.handCards[c], ActionCard) and pl.hand.handCards[c].name == "RoF" ) : 
+                                x0,y0=map.start_coord[0],map.start_coord[1]
+                                for x in range(map.m) : 
+                                    for y in range(map.n) : 
+                                        if (map.grid[x][y].name != "void") and (map.grid[x][y].function == "Nx")  : 
+                                            map.grid[x][y] = VoidCard() 
+                                            tour.boot = True 
+                                            idxtothrow = c
+                                            break
+                                    if (tour.boot) : break 
+                                if (tour.boot) : break 
 
-            else :
-                tour.play_card(idx)
+                                if (y == (map.n-1) and x == (map.m-1) and not (tour.boot)) :
+                                    continue 
+                               
+                            else : 
+                                continue
 
-            if tour.to_throw==True:
-                #print("me naaa")
-                hand1.Throwcard(hand1.handCards[idx])
+                        if (not tour.boot ) :
+                                print("mal3ebch w rma")
+                                for card in range(len(pl.hand.handCards)) : 
+                                    if (pl.hand.handCards[card].function == 'Nx') : 
+                                        hand1.Throwcard(hand1.handCards[card]) 
+                                        break
+                        else : 
+                                print("raw yermi l boot w l3eb ")
+                                hand1.Throwcard(hand1.handCards[idxtothrow])
+                                    
+                                    
+                            
+            print(self.Inprogess)
+                        
 
             #print('Vive nahd ')
             if len(manche1.stockpile)>0 :
@@ -581,25 +779,34 @@ def random_cards(avcards,num_cr) :
 class Tour():
     def __init__(self,current_player):
         self.current_player = current_player
-        self.to_throw=True
+        self.to_throw = True
+        self.boot = False
     def nextplayer (self,next_player):
         self.current_player = next_player
 
-    def action_on_player(self,target_player,IdxCard,idxCardtoRem = None):
+    def action_on_player(self,target_player,IdxCard,Boot = False):
         maching_cards = 0  
         if (self.current_player.hand.handCards[IdxCard].function == "Nx") : 
             if ( ( self.current_player.hand.handCards[IdxCard].name in target_player.actions) or (len(target_player.actions))==3 ) :
                 print("Cannot play this card")
-                self.replay_card() #Go back to choice 
+                if ("B00T" in self.current_player.name ) : 
+                    self.boot = False
+                else : 
+                    self.replay_card()
             elif(len(target_player.actions)<3):
                 target_player.actions.append(self.current_player.hand.handCards[IdxCard].name)
+                self.boot = True
             else : 
                 print("error")
                 self.replay_card()
         elif (self.current_player.hand.handCards[IdxCard].function == "N+"):
             if (len(target_player.actions)==0) : 
                 print("No action cards in the player's hand")
-                self.replay_card()
+                
+                if ("B00T" in self.current_player.name ) : 
+                    self.boot = False
+                else : 
+                    self.replay_card()
             else :
                 for idxCardtoRem in range(len(target_player.actions)):
                     print(target_player.actions[idxCardtoRem])
@@ -612,14 +819,21 @@ class Tour():
                         #break
                 if (maching_cards == 1) :
                     target_player.actions.pop(idxx)
+                    self.boot = True
                 else : 
-                    print("Which action would you want to remove : ")
-                    for idxCardtoRem in range(len(target_player.actions)) : 
-                        print(f"{idxCardtoRem} : {target_player.actions[idxCardtoRem]}\n")
-                    idxx = int(input())  
-                    target_player.actions.pop(idxx)
+                    if (Boot == False) : 
+                        print("Which action would you want to remove : ")
+                        for idxCardtoRem in range(len(target_player.actions)) : 
+                            print(f"{idxCardtoRem} : {target_player.actions[idxCardtoRem]}\n")
+                        idxx = int(input())  
+                        target_player.actions.pop(idxx)
+                    else : 
+                        idxx = 0
+                        target_player.actions.pop(idxx)
+                        self.boot = True
         else:
             print("The action card cannot be played for the target_player")
+            self.boot = False
 
     def action_on_map (self,IdxCard,Map,x,y):
         x0 = Map.start_coord[0]
@@ -810,8 +1024,9 @@ class Tour():
                         
                         go=True
 
-                        if 'G' in MAP.grid[crd[0]][crd[1]].value:
-                           manche1.Inprogess = True
+                        if 'G' in MAP.grid[crd[0]][crd[1]].value and MAP.grid[crd[0]][crd[1]].revealed == True :
+                            print("Ay Tetnak hna")    
+                            manche1.Inprogess = True
                             
                     elif ((cond_on_ncrd) and (cond_on_crd )) or (not (cond_on_ncrd) and not (cond_on_crd )):
                             go=True
@@ -842,13 +1057,20 @@ class Tour():
                         MAP.grid[x_rev][y_rev].revealed=True
 
                     MAP.update_map(self.current_player.hand.handCards[IdxCard],x_pos,y_pos)
+                    self.boot = True
                     print("card played hahaha")
                 else : 
                     print("card cannot be played")
-                    self.replay_card()
+                    if ("B00T" in self.current_player.name ) : 
+                        self.boot = False
+                    else : 
+                        self.replay_card()
             else : 
-                print("wlh ghir nqol")
-                self.replay_card()
+                print("surrounding not good")
+                if ("B00T" in self.current_player.name ) : 
+                    self.boot = False
+                else : 
+                    self.replay_card()
                  
                     
 
@@ -862,44 +1084,68 @@ class Tour():
 
         else:
             print("There is a card already played there")
-            print("Please replay :")
-            self.current_player.hand.DisplayHand()
-            idx=int(input('Select a Card'))
-            self.play_card(idx)
-
-
-    def play_card(self,idx,x_pos=None,y_pos=None,map=None,target_player=None,idxCardtoRem=None):
-        self.to_throw=True
-        if idx == -1:
-            idx = int(input("please select a card to throw: "))
-            print(self.current_player.hand.handCards[idx],'thrown' )   
-            self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
-            self.to_throw=False
-            #return to_throw
-            print(self.to_throw)
-        elif isinstance(self.current_player.hand.handCards[idx],PathCard):
-            if len(self.current_player.actions)==0:
-                x_corda=int(input("please enter X "))
-                y_corda=int(input("please enter y "))
-                rev=input("Do you want to reverse [Y/N]")
-                if rev =='Y':
-                    self.current_player.hand.handCards[idx].reverse()
-                self.play_path(idx,x_corda,y_corda,map1)
-                #self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
-            else:
-                print(f"{self.current_player.name} please fix your material first")
+            if ("B00T" in self.current_player.name ) : 
+                self.boot = False
+            else : 
                 self.replay_card()
-        elif isinstance(self.current_player.hand.handCards[idx],ActionCard):
-            if self.current_player.hand.handCards[idx].name in ["MAP","RoF"] :
-                self.action_on_map (idx,map1,2,1)
-                #self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
-            else:
-                for i in range(len(Game.players)):
-                    print(f'-{i}- {Game.players[i].name}')
-                target=int(input('Enter a number :'))
-                self.action_on_player(Game.players[target],idx)
-                #self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
-        print('to throw raho',self.to_throw)
+
+
+    def play_card(self,idx,Boot = False ,x_pos=None,y_pos=None,map=None,target_player=None,idxCardtoRem=None):
+        if (Boot == False) : 
+            self.to_throw=True
+            if idx == -1:
+                idx = int(input("please select a card to throw: "))
+                print(self.current_player.hand.handCards[idx],'thrown' )   
+                self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
+                self.to_throw=False
+                #return to_throw
+                print(self.to_throw)
+            elif isinstance(self.current_player.hand.handCards[idx],PathCard):
+                if len(self.current_player.actions)==0:
+                    x_corda=int(input("please enter X "))
+                    y_corda=int(input("please enter y "))
+                    rev=input("Do you want to reverse [Y/N]")
+                    if rev =='Y':
+                        self.current_player.hand.handCards[idx].reverse()
+                    self.play_path(idx,x_corda,y_corda,map1)
+                    #self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
+                else:
+                    print(f"{self.current_player.name} please fix your material first")
+                    self.replay_card()
+            elif isinstance(self.current_player.hand.handCards[idx],ActionCard):
+                if self.current_player.hand.handCards[idx].name in ["MAP","RoF"] :
+                    self.action_on_map (idx,map1,2,1)
+                    #self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
+                else:
+                    for i in range(len(Game.players)):
+                        print(f'-{i}- {Game.players[i].name}')
+                    target=int(input('Enter a number :'))
+                    self.action_on_player(Game.players[target],idx)
+                    #self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
+            print('to throw raho',self.to_throw)
+        else : 
+            self.to_throw=True
+            if idx == -1:
+                print(self.current_player.hand.handCards[idx],'thrown' )   
+                self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
+                self.to_throw=False
+                #return to_throw
+                print(self.to_throw)
+            elif isinstance(self.current_player.hand.handCards[idx],PathCard):
+                if len(self.current_player.actions)==0:
+                    self.play_path(idx,x_pos,y_pos,map1)
+                    #self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
+                else:
+                    print(f"{self.current_player.name} please fix your material first")
+                    self.replay_card()
+            elif isinstance(self.current_player.hand.handCards[idx],ActionCard):
+                if self.current_player.hand.handCards[idx].name in ["MAP","RoF"] :
+                    self.action_on_map (idx,map1,2,1)
+                    #self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
+                else:
+                    self.action_on_player(Game.players[target_player],idx,Boot = True)
+                    #self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
+            print('to throw raho',self.to_throw)
         
         
 
@@ -1091,7 +1337,7 @@ class map():
 
   
 
-plyr1 = player("Khaled")
+plyr1 = player("B00T 1")
 plyr2 = player("Feriel")
 plyr3 = player("Assil")
 
@@ -1121,6 +1367,8 @@ for i in range(3):
 
     map1.display_map()
     manche1.DistributeRoles(Game)
+    plyr1.role = "CHR"
+    plyr2.role = "CHR"
     manche1.DistributeCards(Game)
     manche1.showRoles(Game)
 
