@@ -406,7 +406,7 @@ class game(): #Partie
                 else : 
                     print("GOLD ERROR")
         else :
-            
+            print('lenGoldcardsg3',len(self.GoldsCards))
             GoldC = random.choices(self.GoldsCards,k=len(self.players))
             print(len(GoldC))
             if not ( "B00T" in self.players[winner].name ) : 
@@ -437,7 +437,7 @@ class game(): #Partie
 
                 if pl.role == 'SAB' :
                     continue
-                if not ("B00T" in pl.name) :
+                elif not ("B00T" in pl.name) :
                     print(f"player {pl.name} please chose a gold card ")
                     for i in range(len(GoldC)) : 
                         print(f"{i} : {GoldC [i].name} == {GoldC [i].gain}\n")
@@ -449,13 +449,14 @@ class game(): #Partie
                 else : 
                     gains = []
                     for i in range(len(GoldC)) : 
-                        gains.append(GoldC[i].gain)
-                        
+                        gains.append(GoldC[i].gain)                      
                     pl.score += max(gains)
                     ids = gains.index(max(gains))
-                    self.GoldsCards.remove(GoldC[ids])
+                    for h in range(len(self.GoldsCards)) : 
+                        if (self.GoldsCards[h]== max(gains)):
+                            self.GoldsCards.remove(self.GoldsCards[h])
                     GoldC.pop(ids)
-        #print(len(self.GoldsCards))
+        
                 
             
   
@@ -1415,7 +1416,7 @@ for i in range(3):
     manche1.DistributeRoles(Game)
     plyr1.role = "CHR"
     plyr2.role = "CHR"
-    plyr3.role = "SAB"
+    plyr3.role = "CHR"
     manche1.DistributeCards(Game)
     manche1.showRoles(Game)
 
