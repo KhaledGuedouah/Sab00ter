@@ -13,9 +13,9 @@ while True :
         Num_players=int(input("Please enter the number of Players: "))
         break 
     except : 
-        print("Please enter an integer between 3 and 11 NOT a letter or a symbol ... ")
-while Num_players < 3 or Num_players > 11 :
-    Num_players=int(input("Please enter a valid number of Players between 3 and 11: "))
+        print("Please enter an integer between 3 and 10 NOT a letter or a symbol ... ")
+while Num_players < 3 or Num_players > 10 :
+    Num_players=int(input("Please enter a valid number of Players between 3 and 10: "))
 
 Num_boots=int(input("Please enter the number of Boots: "))
 while Num_boots < 0 or Num_boots > Num_players :
