@@ -57,7 +57,7 @@ for i in range(len(Game.players)) :
 print(f"The winner is {winner_name}")
 print("\n")
 print("             CONGRATULATIONS !          ")
-
+input("")
     
     
 
