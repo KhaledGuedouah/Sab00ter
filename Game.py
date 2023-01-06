@@ -53,6 +53,21 @@ class game(): #Partie
            print (f"The score of the player named {player.name} is {player.score}")
            
     def Play (self,manche,Map):
+       """
+        
+
+        Parameters
+        ----------
+        manche : manche
+            Object manche.
+        Map : manche 
+            Object map representing the game's map .
+
+        Returns
+        -------
+        None.
+
+        """
        while  manche.Endmanche == False:
            # for now the game ends when we reach the G goal card
            tour=Tour(self.players[0])
@@ -72,6 +87,21 @@ class game(): #Partie
 
        self.__regenerate()
     def __Scoreupdate(self,Sab = False ,winner = None) :
+        """
+        Scoreupdate : Updates the score of the players
+
+        Parameters
+        ----------
+        Sab : Boolean, optional
+            True when the saboters win the round . The default is False.
+        winner : integer , optional
+            the index of the player who has found the Gold. The default is None.
+
+        Returns
+        -------
+        None.
+
+        """
         plyrs = list(self.players)
         idxS = []
         if (Sab) : 
@@ -152,9 +182,25 @@ class game(): #Partie
                         if (self.GoldsCards[h]== max(gains)):
                             self.GoldsCards.remove(self.GoldsCards[h])
                     GoldC.pop(ids)   
-
+# This class provides utility functions for a signle play (tour)
 class Tour():
+
     def __init__(self,current_player):
+        
+        """
+        Constructor of a class Tour
+        
+        Attributes
+        ----------
+        current_player : player class
+            the current player in a signle play (tour).
+        to_throw : Boolean 
+            Boolean to check if a player has throw a card or not yet
+        boot : list
+            A boolean to check if the B00T played or not
+
+
+        """
         self.__current_player = current_player
         self.__to_throw = True
         self.boot = False
@@ -180,6 +226,27 @@ class Tour():
         self.current_player = next_player
 
     def action_on_player(self,target_player,IdxCard,Manche,Map,Boot = False):
+        """
+        
+
+        Parameters
+        ----------
+        target_player : player class
+            the target player to play an action against
+        IdxCard : integer
+            Index of the action card to be played.
+        Manche : manche class
+            Object manche.
+        Map : map class
+            Object map representing the game's map
+        Boot : Boolean, optional
+            It is True when the player is a B00T. The default is False.
+
+        Returns
+        -------
+        None.
+
+        """
         maching_cards = 0  
         if (self.current_player.hand.handCards[IdxCard].function == "Nx") : 
             if ( ( self.current_player.hand.handCards[IdxCard].name in target_player.actions) or (len(target_player.actions))==3 ) :
@@ -233,6 +300,27 @@ class Tour():
             self.boot = False
 
     def action_on_map (self,IdxCard,Map,x,y,Manche):
+        """
+        
+
+        Parameters
+        ----------
+        IdxCard : integer
+            Index of the action card to be played.
+        Map : map class
+            Object map representing the game's map.
+        x : integer
+            x coordinate where the player wants to play his card 
+        y : integer
+            y coordinate where the player wants to play his card 
+        Manche : manche class
+            Object manche.
+
+        Returns
+        -------
+        None.
+
+        """
         x0 = Map.start_coord[0]
         y0 = Map.start_coord[1]
         if (self.current_player.hand.handCards[IdxCard].name == "RoF") :
@@ -270,6 +358,19 @@ class Tour():
             self.replay_card(Manche,Map)
 
     def show_actions(self,Game) :
+        """
+        show_actions : Displays the actions played on (against) each player
+
+        Parameters
+        ----------
+        Game : game class
+            Object game.
+
+        Returns
+        -------
+        None.
+
+        """
         for i in range(len(Game.players)):
             print(f"Action cards played on {Game.players[i].name}")
             for crd in Game.players[i].actions:
@@ -277,6 +378,29 @@ class Tour():
             print("")
     
     def check_path(self,carda,x_pos,y_pos,MAP=None,not_check=None):
+        """
+        check_path : Checks if the card is in a valid position in the map and can be played there
+
+        Parameters
+        ----------
+        carda : card object
+            the card to be checked.
+         Map : map class
+             Object map representing the game's map.
+         x : integer
+             x coordinate where the player wants to play his card 
+         y : integer
+             y coordinate where the player wants to play his card 
+        not_check : TYPE, optional
+            DESCRIPTION. The default is None.
+
+        Returns
+        -------
+        bool
+            True : if the card can be played 
+            False: if the card can not be played in the given coordinates
+
+        """
         a=False
         for chr in carda.name:
             
@@ -309,7 +433,7 @@ class Tour():
             #print("there is no down")$
         
         return False
-
+    #This function uses reccurence with check_path to check if the card can be played
     def check_card(self,x_pos,y_pos,MAP,not_check=None):
         
         if x_pos >=MAP.m or x_pos < 0:
@@ -329,7 +453,7 @@ class Tour():
         else:
             return self.check_path(MAP.grid[x_pos][y_pos],x_pos,y_pos,MAP,not_check)
 
-
+    # This function places the card in the right place in the map if it can be played there
     def play_path(self,IdxCard,x_pos,y_pos,MAP,Manche):
         m = MAP.m #5
         n=MAP.n #9
@@ -497,6 +621,29 @@ class Tour():
 
 
     def play_card(self,idx,Manche,Map,Game,Boot = False ,x_pos=None,y_pos=None,map=None,target_player=None):
+        """
+        
+
+        Parameters
+        ----------
+        Game : game class
+            Object game.
+       target_player : player class
+           the target player to play an action against
+       idx : integer
+           Index of the action card to be played.
+       Manche : manche class
+           Object manche.
+       Map : map class
+           Object map representing the game's map
+       Boot : Boolean, optional
+           It is True when the player is a B00T. The default is False.
+
+        Returns
+        -------
+        None.
+
+        """
         if (Boot == False) : 
             self.to_throw=True
             if idx == -1:
@@ -553,6 +700,7 @@ class Tour():
                     #self.current_player.hand.Throwcard(self.current_player.hand.handCards[idx])
             #print('to throw raho',self.to_throw)
     def replay_card(self,Manche,Map):
+        # If a player plays a non valid card this function asks him to replay again 
         print(f"Please  {self.current_player.name} replay :")
         self.current_player.hand.DisplayHand()
         idx=int(input('Select a Card: '))

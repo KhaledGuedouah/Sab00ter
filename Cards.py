@@ -3,23 +3,25 @@
 from abc import ABC , abstractmethod
 import random
 
-
+#Abstract mother class of all card classes 
 class Card(ABC):
     def __init__(self):
         pass
     @abstractmethod
     def display_card(self):
+        #This methode is for Displaying the card in a visual way
         pass
     
     def __str__(self):
+        #Printing of name and function of a card
         return f"{self.name} ({self.function}) card "
 
 # Definition of the inheriting classes of Card
 class RoleCard(Card):
     def __init__(self,name,function="Nu"):
         super().__init__()
-        self.name = name 
-        self.function = function
+        self.name = name  # Name of the card
+        self.function = function # The function of the card (Neutral : Nu Positiive : N+ of negative : N-)
     def display_card(self):
 
         fst=" "*len(self.name)
@@ -34,8 +36,8 @@ class RoleCard(Card):
 class PathCard(Card):
     def __init__ (self,name,function):
         super().__init__()
-        self.name = name 
-        self.function = function
+        self.name = name  # Name of the card
+        self.function = function # The function of the card (Neutral : Nu Positiive : N+ of negative : N-)
     def display_card(self):
         fst="   "
         snd=f" {self.function[1]} "
@@ -53,6 +55,7 @@ class PathCard(Card):
         shwd= f"({fst})\n({snd})\n({thd})"
         return shwd
     def reverse(self):
+        #This methode reverses the Card 
         self.name=self.name.replace('U','d')
         self.name=self.name.replace('D','u')
         self.name=self.name.replace('R','l')
@@ -63,8 +66,8 @@ class PathCard(Card):
 class ActionCard(Card):
     def __init__(self,name,function="Nu"):
         super().__init__()
-        self.name = name 
-        self.function = function
+        self.name = name  # Name of the card
+        self.function = function # The function of the card (Neutral : Nu Positiive : N+ of negative : N-)
     def display_card(self):
 
         if self.function == "Nx":
@@ -88,9 +91,9 @@ class GoldCard(Card):
 
     def __init__(self, name, function="Nu",gain=0):
         super().__init__()
-        self.name = name 
-        self.function = function
-        self.gain=gain
+        self.name = name  # Name of the card
+        self.function = function # The function of the card (Neutral : Nu Positiive : N+ of negative : N-)
+        self.gain=gain # This attibut is the gain of the gold card
 
     def display_card(self):
         fst=f" {self.gain} "
@@ -100,10 +103,12 @@ class GoldCard(Card):
         return shwd
     def __str__(self):
         return super().__str__()
+    
+# A void card displays nothing in the map 
 class VoidCard(Card):
     def __init__(self):
         super().__init__()
-        self.name = "void"
+        self.name = "void" 
         self.function = "void"
     def display_card(self):
         fst= "   "
@@ -113,11 +118,12 @@ class VoidCard(Card):
         return shwd
     def __str__(self):
         return super().__str__()
+
 class GoalCard(PathCard):
     def __init__(self, name, function="Nu",value='N', revealed=False):
         super().__init__(name,function)
-        self.__value=value
-        self.revealed = revealed
+        self.__value=value # The value of a gold card or N if it is a nugget
+        self.revealed = revealed # True when the END card is revealed 
     @property
     def value( self ) :
         return self.__value
@@ -156,8 +162,8 @@ class GoalCard(PathCard):
     
     def __str__(self):
         return super().__str__()
+    
 # Fucntion to create all cards of the game 
-
 def create_dec():
     card_list={"Role" :{"S":[],"C":[]},
                "Action":[],
@@ -311,7 +317,7 @@ def create_dec():
         card_list["Gold"].append(S)   
 
     return card_list
-
+# This function output a random number of card from a list of cards
 def random_cards(avcards,num_cr) :
     cards = []
     for i in range(num_cr) : 
