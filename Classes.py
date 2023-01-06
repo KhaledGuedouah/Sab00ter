@@ -417,6 +417,13 @@ class game(): #Partie
        winner = self.players.index(tour.current_player)
        self.__Scoreupdate(Sab,winner)
        self.__Display_score()
+       
+       for pl_id in range(len(self.players)-1,winner-1,-1):
+           A=self.players.pop(pl_id)
+           self.players.append(A)
+
+
+
        self.__regenerate()
     def __Scoreupdate(self,Sab = False ,winner = None) :
         plyrs = list(self.players)
@@ -545,7 +552,10 @@ class hand () :
             lines[1].append(card_in_lst[1])
             lines[2].append(card_in_lst[2])
         for line in lines:
-            print(space.join(line)) 
+            print(space.join(line))
+        for i in range(len(self.handCards)):
+            print(f" [{i}]     ",end="")
+        print("")
         
         
 class manche () : 
@@ -617,6 +627,8 @@ class manche () :
        
     def showRoles (self,Game):
         for i in range (len(Game.players)):
+            if "B00T" in Game.players[i].name :
+                continue
             input(f"player {Game.players[i].name} press a Key ") 
             print(f"Your Role is {Game.players[i].role} \n")
             
@@ -645,13 +657,22 @@ class manche () :
             tour.nextplayer(pl) 
             hand1=tour.current_player.hand
             hand1.DisplayHand() 
+            if len(hand1.handCards )== 0 :
+                continue
             if not ("B00T" in pl.name ) : 
                 
                 print(f"{tour.current_player.name}'s turn to play ")
-                idx = int(input("please enter a card or '-1' if you want to throw a card:  "))
+                idx = int(input(f"please enter a card or [0:{len(tour.current_player.hand.handCards)-1}] '-1' if you want to throw a card:  "))
+                condition=len(tour.current_player.hand.handCards)
+                #print(condition)
+                while ( idx!=-1 and  idx<0 ) or idx>=condition :
+                    idx = int(input(f"please enter a valid Number [0:{len(tour.current_player.hand.handCards)-1}] card or '-1' if you want to throw a card:  "))
+
     
                 if idx == -1:
                      idx = int(input("please select a card to throw: "))
+                     while   idx<0  or idx >= len(tour.current_player.hand.handCards):
+                        idx = int(input(f"please enter a valid Number [0:{len(tour.current_player.hand.handCards)-1}] : "))
                      print(hand1.handCards[idx],'thrown' )
                      hand1.Throwcard(hand1.handCards[idx])
                      tour.to_throw=False
@@ -951,7 +972,16 @@ class Tour():
             print("Rocks falling watch out !")
             xd = int(input('Please enter X: '))
             yd= int(input('Please enter Y: '))
-            Map.update_map(self.current_player.hand.handCards[IdxCard],xd,yd)
+
+            if xd>= Map.m or yd>= Map.n or xd< 0 or yd<0 :
+                print("Out of Map. Please enter a valid value  of X and Y: ")
+                self.replay_card(Manche)
+            elif Map.grid[xd][yd].name=="UDRL" or isinstance(Map.grid[xd][yd],VoidCard) or isinstance(Map.grid[xd][yd],GoalCard):
+                print("Please enter a valid value  of X and Y:")
+                self.replay_card(Manche)
+            else:
+                Map.update_map(self.current_player.hand.handCards[IdxCard],xd,yd)
+
         elif (self.current_player.hand.handCards[IdxCard].name == "MAP") :
             print("Which card do you want to see")
             print("Up : U | Down : D | Middle : M")
@@ -1366,12 +1396,33 @@ class map():
 
   
 
-plyr1 = player("plyr1")
-plyr2 = player("B00T 2")
-plyr3 = player("B00T 3")
 
-Game = game([plyr1,plyr2,plyr3])
+Players=[]
+Num_players=int(input("Please enter the number of Players: "))
+while Num_players < 3 or Num_players > 11 :
+    Num_players=int(input("Please enter a valid number of Players between 3 and 11: "))
 
+Num_boots=int(input("Please enter the number of Boots: "))
+while Num_boots < 0 or Num_boots > Num_players :
+    Num_boots=int(input(f"Please enter a valid number of Boots between 0 and {Num_players}: "))
+
+for i in range(Num_boots):
+    name_player=f"B00T {i+1}"
+    plyr=player(name_player)
+    Players.append(plyr)
+ 
+
+for i in range(Num_players-Num_boots):
+    name_player=input(f"Please enter the name of the Player {i+Num_boots+1}: ")
+    plyr=player(name_player)
+    Players.append(plyr)
+    
+#plyr1 = player("plyr1")
+#plyr2 = player("B00T 2")
+#plyr3 = player("B00T 3")
+
+#Game = game([plyr1,plyr2,plyr3])
+Game = game(Players)
 
 for i in range(3):
     map1 = map(Game.dec)
@@ -1379,13 +1430,16 @@ for i in range(3):
 
     map1.display_map()
     manche1.DistributeRoles(Game)
-    plyr1.role = "CHR"
-    plyr2.role = "CHR"
-    plyr3.role = "CHR"
+    #plyr1.role = "CHR"
+    #plyr2.role = "CHR"
+    #5plyr3.role = "CHR"
     manche1.DistributeCards(Game)
     manche1.showRoles(Game)
-
+    
+    input("Press enter to start the new manche")
+    
     Game.Play (manche1)
+    
     #Game.regenerate()
     
 
