@@ -1,13 +1,28 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Jan  6 11:16:49 2023
 
-@author: khale
-"""
+
+
 from Cards import *
+# This class fully describes a player for the game purpose 
 class player():
 
     def __init__(self,name):
+        """
+        Constructor of a class player
+        
+        Attributes
+        ----------
+        name : string
+            player's name.
+        score : integer
+            player's role.The initialisation is 0.
+        hand : list
+            list of cards in the player's hand.The default is None
+        Actions : list
+            list of cards in the player's hand.The default is  []
+
+    
+        """
         self.name = name
         self.__score = 0
         self.__role = None

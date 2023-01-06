@@ -1,8 +1,26 @@
 # -*- coding: utf-8 -*-
 from Cards import *
 import random 
+# This class provides utility functions for the MAP of the Game
 class map():
-    def __init__(self,dec,n=9,m=5,start_coord=[2,0]):   
+    def __init__(self,dec,n=9,m=5,start_coord=[2,0]): 
+        """
+        Constructor of a class map
+
+        Attributes
+        ----------
+        dec : hash table (Dictionnary)
+            Card Deck
+        n : integer, optional
+            The width of the map. The default is 9.
+        m : integer, optional
+            The width of the map. The default is 5.
+        start_coord : list, optional
+            The coordinates of the starting card. The default is [2,0].
+
+       
+
+        """
         self.dec=dec
         self.n=n
         self.m=m
@@ -26,6 +44,14 @@ class map():
         self.__grid= grid
 
     def display_map(self) :
+        """
+        display_map : Displays the entire Map for the players
+
+        Returns
+        -------
+        None.
+
+        """
         first = ''
         for p in range(self.n):
             first+= "  " + f"{p}" + "  "
@@ -47,6 +73,24 @@ class map():
         print(grid_to_print)
 
     def update_map(self,Cardplayed,x,y):
+        """
+        update_map : Updates the map by adding the played card (if it is a path card) or omiting another 
+        card if the card is a Rock fall card and expends the map if the player plays in the outer coordinates 
+
+        Parameters
+        ----------
+        Cardplayed card
+            The played card
+        x : integer
+            x coordinate where the player wants to play his card 
+        y : integer
+            y coordinate where the player wants to play his card 
+
+        Returns
+        -------
+        None.
+
+        """
 
         if (x == self.m  ) :
             self.grid.append([VoidCard()]*self.n)

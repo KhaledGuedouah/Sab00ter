@@ -1,16 +1,31 @@
 # -*- coding: utf-8 -*-
 from Cards import *
 import random
- 
+ # This class provides utility functions for the good functioning the game (The main class)
 class game(): #Partie
 
     def __init__(self,players):
+        """
+        Constructor of a class game
+        
+        Attributes
+        ----------
+        players : list
+            list of all the players.
+        dec : hash table (Dictionnary)
+            Card Deck
+        AvailableCards : list
+            list of availlable card throughout the rounds
+
+    
+        """
         self.players = players
         self.__dec = create_dec()
         avcards = self.dec["Action"] + self.dec["Path"] 
         random.shuffle(avcards)
         self.AvailableCards = avcards
         self.GoldsCards=self.dec["Gold"]
+    
     @property
     def dec( self ) :
         return self.__dec

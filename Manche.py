@@ -3,8 +3,20 @@ import random
 from Hand import hand
 from Cards import * 
 
+# This class provides utility functions for the good functioning of a round in the game
 class manche () : 
     def __init__(self):
+        """
+         Constructor of a class manche
+
+         Attributes
+         ----------
+         stockpile : list
+             a list of all the cards in the stockpile .
+         Endmanche : integer
+             The number of card in each player's hand.
+
+        """
         self.__stockpile = []
         self.__Endmanche = False
         
@@ -24,6 +36,20 @@ class manche () :
         self.__Endmanche= Endmanche
     
     def DistributeRoles(self,Game):
+        """
+        DistributeRoles takes care of distributing the roles of miners and saboters 
+        to the players depending on their number
+
+        Parameters
+        ----------
+        Game : game class
+            it containes the players and the available card in the game.
+
+        Returns
+        -------
+        None.
+
+        """
         num_ply = len(Game.players)
         if (num_ply==3) : 
             selectioncards = random.choices(Game.dec["Role"]["S"],k=1) + random.choices(Game.dec["Role"]["C"],k=3)
@@ -51,6 +77,20 @@ class manche () :
    
             
     def DoSabWon (self,Game):
+        """
+        DoSabWon takes care of checking if the saboters won of the round is still running
+
+        Parameters
+        ----------
+        Game : game class
+            it containes the players and the available card in the game.
+
+        Returns
+        -------
+        bool
+            True : if the saboters won the round / False : if the saboters did not won and the round is still in progress.
+
+        """
         Wc = 0
         if (len(self.stockpile)==0):
             for i in range(len(Game.players)) : 
@@ -70,6 +110,20 @@ class manche () :
         
        
     def showRoles (self,Game):
+        """
+        showRoles Displays the players and their role (Miner/Chercheurs or Saboter/Saboteur)
+        if the player is a B00T the role is not displayed
+
+        Parameters
+        ----------
+        Game : game class
+            it containes the players and the available card in the game.
+
+        Returns
+        -------
+        None.
+
+        """
         for i in range (len(Game.players)):
             if "B00T" in Game.players[i].name :
                 continue
@@ -77,6 +131,20 @@ class manche () :
             print(f"Your Role is {Game.players[i].role} \n")
             
     def DistributeCards(self,Game):
+        """
+        DistributeCards takes care of sitributing shuffled card to the players 
+        and stores the rest of the cards in a pile (Stockpile)
+
+        Parameters
+        ----------
+        Game : game class
+            it containes the players and the available card in the game.
+
+        Returns
+        -------
+        None.
+
+        """
         num_ply = len(Game.players)
         avcards = list(Game.AvailableCards)
         if (num_ply>=3 and num_ply<=5 ) :
@@ -95,6 +163,28 @@ class manche () :
 
         
     def play_tour(self,Game,tour,map):
+        """
+        play_tour goes through all the players (one tour) for them to play and 
+        manages the progress of the game depending on wether the player is a B00T 
+        or a real person.
+        The AI simulating the BOOT is also contained in this function 
+
+        Parameters
+        ----------
+        Game : game class
+            It containes the players and the available card in the game.
+        tour : Tour class
+            It Contains the current player who's playing , a boolean to keep track 
+            if the current player has thronw a card and another boolean to indicate if the player has 
+            played in the case if he is a B00T
+        map : map Class
+            It contains the grid representing the map and the coordinates of the start card.
+
+        Returns
+        -------
+        None.
+
+        """
         tour.boot = False
         #listpl = list(Game.players)
         for pl in Game.players:
@@ -306,13 +396,7 @@ class manche () :
                         else : 
                                 if (len(pl.hand.handCards) > 0) : 
                                     hand1.Throwcard(hand1.handCards[idxtothrow])
-                                    
-                                    
-                            
-            
-                        
 
-           
             if len(self.stockpile)>0 :
                 hand1.AddCard(self.stockpile.pop())
                 hand1.DisplayHand()
