@@ -433,6 +433,7 @@ class game(): #Partie
                 if (self.players[i].role == 'SAB') :
                     idxS.append(i) 
             SabC = len(idxS)
+            print(SabC)
             for i in idxS : 
                 if (SabC == 1 ) : 
                     # We have to POP from the gold cards 4 worth of gold
@@ -450,7 +451,7 @@ class game(): #Partie
                         if (self.GoldsCards[i].gain == 2) : 
                             self.GoldsCards.remove(self.GoldsCards[i])
                             break
-                elif(SabC == 3) : 
+                elif(SabC == 3 or SabC == 2 ) : 
                     self.players[i].score += 3
                     for i in range(len(self.GoldsCards)) : 
                         if (self.GoldsCards[i].gain == 3) : 
